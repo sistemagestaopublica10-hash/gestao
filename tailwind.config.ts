@@ -82,9 +82,29 @@ const config: Config = {
           "0%":   { backgroundPosition: "-400px 0" },
           "100%": { backgroundPosition: "400px 0" },
         },
+        fadeInUp: {
+          "0%":   { opacity: "0", transform: "translateY(14px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        fadeIn: {
+          "0%":   { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        scaleIn: {
+          "0%":   { opacity: "0", transform: "scale(0.97)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
+        slideInRight: {
+          "0%":   { opacity: "0", transform: "translateX(16px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
       },
       animation: {
-        shimmer: "shimmer 1.4s ease infinite",
+        shimmer:       "shimmer 1.4s ease infinite",
+        "fade-in-up":  "fadeInUp 0.45s cubic-bezier(0.16,1,0.3,1) both",
+        "fade-in":     "fadeIn 0.3s ease both",
+        "scale-in":    "scaleIn 0.4s cubic-bezier(0.16,1,0.3,1) both",
+        "slide-in-r":  "slideInRight 0.4s cubic-bezier(0.16,1,0.3,1) both",
       },
     },
   },

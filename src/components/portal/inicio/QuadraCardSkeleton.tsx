@@ -1,20 +1,15 @@
 export default function QuadraCardSkeleton() {
   return (
-    <div className="bg-white rounded-[16px] overflow-hidden shadow-card">
-      {/* Foto */}
-      <div className="h-40 shimmer" />
-      {/* Corpo */}
-      <div className="p-4 space-y-3">
-        {/* Badge */}
-        <div className="h-5 w-24 rounded-pill shimmer" />
-        {/* Nome */}
-        <div className="h-5 w-3/4 rounded shimmer" />
-        {/* Bairro */}
-        <div className="h-4 w-1/2 rounded shimmer" />
-        {/* Nota */}
-        <div className="h-4 w-2/3 rounded shimmer" />
-        {/* Botão */}
-        <div className="h-9 w-full rounded-[12px] shimmer mt-2" />
+    <div className="bg-white rounded-[20px] overflow-hidden shadow-card flex flex-col">
+      <div className="h-44 shimmer" />
+      <div className="p-4 flex flex-col gap-2.5">
+        <div className="h-4 w-3/4 rounded-full shimmer" />
+        <div className="h-3.5 w-1/2 rounded-full shimmer" />
+        <div className="h-3.5 w-2/3 rounded-full shimmer" />
+        <div className="flex items-center justify-between pt-2.5 mt-1 border-t border-[#F3F4F6]">
+          <div className="h-3.5 w-16 rounded-full shimmer" />
+          <div className="h-3.5 w-14 rounded-full shimmer" />
+        </div>
       </div>
     </div>
   )

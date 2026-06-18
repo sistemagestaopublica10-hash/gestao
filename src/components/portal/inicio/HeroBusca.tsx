@@ -2,6 +2,7 @@
 
 import { Search } from 'lucide-react'
 import { mockMunicipio } from '@/lib/mock-data'
+import PortalNav from '@/components/portal/layout/PortalNav'
 
 interface Props {
   busca: string
@@ -10,7 +11,7 @@ interface Props {
 
 export default function HeroBusca({ busca, onBuscaChange }: Props) {
   return (
-    <section className="bg-[#1B3A6B] px-4 sm:px-6 py-10 sm:py-14">
+    <section className="bg-[#1B3A6B] px-4 sm:px-6 py-10 sm:py-12">
       <div className="max-w-2xl mx-auto text-center space-y-4">
         <h1
           className="text-white text-2xl sm:text-4xl font-bold leading-tight"
@@ -22,7 +23,6 @@ export default function HeroBusca({ busca, onBuscaChange }: Props) {
           Reserve online, de graça, sem precisar ligar.
         </p>
 
-        {/* Campo de busca */}
         <div className="relative mt-6 max-w-lg mx-auto">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF]" />
           <input
@@ -34,6 +34,8 @@ export default function HeroBusca({ busca, onBuscaChange }: Props) {
             aria-label="Buscar quadra por nome ou bairro"
           />
         </div>
+
+        <PortalNav variant="hero" />
       </div>
     </section>
   )

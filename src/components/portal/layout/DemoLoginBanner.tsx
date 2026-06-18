@@ -22,7 +22,7 @@ export default function DemoLoginBanner() {
   }
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-md">
+    <div className="fixed bottom-[72px] sm:bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-md">
       <div className="bg-[#0D1F3C] text-white rounded-[14px] shadow-2xl px-4 py-3 flex items-center gap-3">
         <span className="text-lg shrink-0">🎭</span>
         <div className="flex-1 min-w-0">
