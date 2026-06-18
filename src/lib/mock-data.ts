@@ -1,3 +1,5 @@
+// ── Admin data ──────────────────────────────────────────────────────────────
+
 export const mockEspacos = [
   { id: '1', nome: 'Quadra Central de Tênis', bairro: 'Centro', tipo: 'Quadra de Tênis', modalidades: ['tenis'], status: 'ativo', foto: null },
   { id: '2', nome: 'Quadra Society Norte', bairro: 'Norte', tipo: 'Quadra Poliesportiva', modalidades: ['futsal', 'basquete'], status: 'ativo', foto: null },
@@ -45,4 +47,156 @@ export const mockGestor = {
   nome: 'João Mendonça',
   municipio: 'Colatina — ES',
   cargo: 'Gestor de Esportes',
+}
+
+// ── Portal do Cidadão data ───────────────────────────────────────────────────
+
+export type EspacoPublico = {
+  id: string
+  nome: string
+  bairro: string
+  tipo: string
+  modalidades: string[]
+  horario: string
+  nota: number
+  totalAvaliacoes: number
+  totalRelatosAbertos: number
+  regras: string
+  gradiente: string
+}
+
+export const mockEspacosPublicos: EspacoPublico[] = [
+  {
+    id: '1',
+    nome: 'Quadra Central de Tênis',
+    bairro: 'Centro',
+    tipo: 'Quadra de Tênis',
+    modalidades: ['Tênis'],
+    horario: '07:00 – 22:00',
+    nota: 4.8,
+    totalAvaliacoes: 127,
+    totalRelatosAbertos: 1,
+    regras: 'Uso máximo de 1 hora quando houver fila. Trazer seus próprios equipamentos. Proibido fumar e consumir bebidas alcoólicas.',
+    gradiente: 'from-[#2D5FA6] to-[#1B3A6B]',
+  },
+  {
+    id: '2',
+    nome: 'Quadra Society Norte',
+    bairro: 'Bairro Norte',
+    tipo: 'Quadra Poliesportiva',
+    modalidades: ['Futsal', 'Basquete', 'Vôlei'],
+    horario: '07:00 – 21:00',
+    nota: 2.8,
+    totalAvaliacoes: 43,
+    totalRelatosAbertos: 3,
+    regras: 'Máximo 10 pessoas por quadra. Reserva obrigatória.',
+    gradiente: 'from-[#7C3AED] to-[#4C1D95]',
+  },
+  {
+    id: '3',
+    nome: 'Campo Aberto do Parque Sul',
+    bairro: 'Zona Sul',
+    tipo: 'Campo de Futebol',
+    modalidades: ['Futebol'],
+    horario: '06:00 – 20:00',
+    nota: 4.2,
+    totalAvaliacoes: 89,
+    totalRelatosAbertos: 0,
+    regras: 'Campo gramado. Permitido apenas chuteiras de travas de borracha.',
+    gradiente: 'from-[#1A9E60] to-[#065f3c]',
+  },
+  {
+    id: '4',
+    nome: 'Quadra de Vôlei da Praia',
+    bairro: 'Beira Rio',
+    tipo: 'Quadra de Vôlei',
+    modalidades: ['Vôlei de Areia'],
+    horario: '07:00 – 20:00',
+    nota: 4.6,
+    totalAvaliacoes: 62,
+    totalRelatosAbertos: 0,
+    regras: 'Quadra de areia ao ar livre. Sem horário de chuva. Limite de 6 por lado.',
+    gradiente: 'from-[#D97706] to-[#92400e]',
+  },
+  {
+    id: '5',
+    nome: 'Arena Poliesportiva Leste',
+    bairro: 'Zona Leste',
+    tipo: 'Quadra Poliesportiva',
+    modalidades: ['Futsal', 'Basquete'],
+    horario: '08:00 – 22:00',
+    nota: 3.9,
+    totalAvaliacoes: 38,
+    totalRelatosAbertos: 2,
+    regras: 'Uso de calçado adequado obrigatório. Não é permitido comer na quadra.',
+    gradiente: 'from-[#0891b2] to-[#164e63]',
+  },
+  {
+    id: '6',
+    nome: 'Quadra do Bairro Novo',
+    bairro: 'Bairro Novo',
+    tipo: 'Quadra Poliesportiva',
+    modalidades: ['Futsal', 'Vôlei'],
+    horario: '07:00 – 21:00',
+    nota: 4.1,
+    totalAvaliacoes: 54,
+    totalRelatosAbertos: 1,
+    regras: 'Reserva com mínimo de 30 min de antecedência.',
+    gradiente: 'from-[#be185d] to-[#831843]',
+  },
+]
+
+export type Postagem = {
+  id: string
+  tipo: 'avaliacao' | 'problema'
+  espacoId: string
+  autor: string
+  data: string
+  foto: string | null
+} & (
+  | { tipo: 'avaliacao'; nota: number; comentario: string }
+  | { tipo: 'problema'; descricao: string; statusPrefeitura: 'aberto' | 'em_andamento' | 'resolvido'; dataResolucao?: string }
+)
+
+export const mockPostagens: Postagem[] = [
+  { id: '1', tipo: 'avaliacao', espacoId: '1', autor: 'João Silva', nota: 4, comentario: 'Quadra em ótimo estado, só a rede precisa de troca logo.', data: '2026-06-14', foto: null },
+  { id: '2', tipo: 'avaliacao', espacoId: '1', autor: 'Ana Lima', nota: 5, comentario: 'Excelente! Limpinha e bem conservada. Voltarei sempre.', data: '2026-06-12', foto: null },
+  { id: '3', tipo: 'problema', espacoId: '1', autor: 'Fernanda Rocha', descricao: 'Iluminação apagada no lado norte da quadra', data: '2026-06-13', foto: null, statusPrefeitura: 'aberto' },
+  { id: '4', tipo: 'avaliacao', espacoId: '2', autor: 'Pedro Moura', nota: 2, comentario: 'Piso escorregadio e rede rasgada. Precisa de manutenção urgente.', data: '2026-06-15', foto: null },
+  { id: '5', tipo: 'problema', espacoId: '2', autor: 'Maria Oliveira', descricao: 'Rede completamente rasgada do lado direito', data: '2026-06-16', foto: null, statusPrefeitura: 'aberto' },
+  { id: '6', tipo: 'problema', espacoId: '2', autor: 'Carlos Pereira', descricao: 'Buraco no piso perto da linha lateral', data: '2026-06-13', foto: null, statusPrefeitura: 'resolvido', dataResolucao: '2026-06-15' },
+  { id: '7', tipo: 'avaliacao', espacoId: '3', autor: 'Roberta Costa', nota: 5, comentario: 'Gramado impecável, espaço amplo. Perfeito para jogar no fim de semana.', data: '2026-06-11', foto: null },
+]
+
+export const mockHorarios: Record<string, Record<string, { hora: string; status: 'livre' | 'ocupado' | 'bloqueado' }[]>> = {
+  '1': {
+    '2026-06-16': [
+      { hora: '07:00', status: 'livre' },
+      { hora: '08:00', status: 'ocupado' },
+      { hora: '09:00', status: 'livre' },
+      { hora: '10:00', status: 'livre' },
+      { hora: '11:00', status: 'ocupado' },
+      { hora: '12:00', status: 'bloqueado' },
+      { hora: '13:00', status: 'bloqueado' },
+      { hora: '14:00', status: 'livre' },
+      { hora: '15:00', status: 'livre' },
+      { hora: '16:00', status: 'ocupado' },
+      { hora: '17:00', status: 'livre' },
+      { hora: '18:00', status: 'ocupado' },
+      { hora: '19:00', status: 'livre' },
+      { hora: '20:00', status: 'livre' },
+      { hora: '21:00', status: 'ocupado' },
+    ],
+  },
+}
+
+export const mockMinhasReservas = [
+  { id: '2024-0847', espacoId: '1', espacoNome: 'Quadra Central de Tênis', data: '2026-06-16', horaInicio: '09:00', horaFim: '10:00', status: 'proxima' as const, avaliado: false },
+  { id: '2024-0801', espacoId: '3', espacoNome: 'Campo Aberto do Parque Sul', data: '2026-06-10', horaInicio: '08:00', horaFim: '09:00', status: 'anterior' as const, avaliado: true },
+  { id: '2024-0756', espacoId: '2', espacoNome: 'Quadra Society Norte', data: '2026-06-08', horaInicio: '19:00', horaFim: '20:00', status: 'anterior' as const, avaliado: false },
+]
+
+export const mockMunicipio = {
+  nome: 'Colatina',
+  estado: 'ES',
 }

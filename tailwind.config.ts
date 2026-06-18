@@ -10,16 +10,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        /* QuadraGov tokens */
+        /* Admin tokens */
         "gov-900": "#0D1F3C",
         "gov-800": "#1B3A6B",
         "gov-600": "#2D5FA6",
         "gov-100": "#E6F0FF",
         "gov-50":  "#F4F7FB",
-        success:  "#1A9E60",
-        warning:  "#D97706",
-        danger:   "#E53E3E",
-        neutral:  "#64748B",
+        /* Portal tokens */
+        "p-800":   "#1B3A6B",
+        "p-600":   "#2D5FA6",
+        "p-100":   "#E6F0FF",
+        "p-50":    "#F4F7FB",
+        /* Status */
+        success:   "#1A9E60",
+        warning:   "#D97706",
+        danger:    "#E53E3E",
+        neutral:   "#64748B",
         /* shadcn/ui semantic tokens */
         background:  "hsl(var(--background))",
         foreground:  "hsl(var(--foreground))",
@@ -58,14 +64,26 @@ const config: Config = {
       fontFamily: {
         display: ["Plus Jakarta Sans", "sans-serif"],
         body:    ["Inter", "sans-serif"],
+        syne:    ["Syne", "sans-serif"],
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        pill: "999px",
+        lg:   "var(--radius)",
+        md:   "calc(var(--radius) - 2px)",
+        sm:   "calc(var(--radius) - 4px)",
       },
       boxShadow: {
-        card: "0 1px 3px rgba(27,58,107,0.08), 0 1px 2px rgba(0,0,0,0.04)",
+        card:   "0 1px 3px rgba(27,58,107,0.08), 0 1px 2px rgba(0,0,0,0.04)",
+        "card-hover": "0 4px 12px rgba(27,58,107,0.12), 0 2px 4px rgba(0,0,0,0.06)",
+      },
+      keyframes: {
+        shimmer: {
+          "0%":   { backgroundPosition: "-400px 0" },
+          "100%": { backgroundPosition: "400px 0" },
+        },
+      },
+      animation: {
+        shimmer: "shimmer 1.4s ease infinite",
       },
     },
   },
