@@ -1,5 +1,6 @@
 import Header from '@/components/portal/layout/Header'
 import Footer from '@/components/portal/layout/Footer'
+import DemoLoginBanner from '@/components/portal/layout/DemoLoginBanner'
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -9,6 +10,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
         {children}
       </main>
       <Footer />
+      <DemoLoginBanner />
     </div>
   )
 }
