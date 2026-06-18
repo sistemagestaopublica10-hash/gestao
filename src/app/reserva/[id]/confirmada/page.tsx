@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { mockMinhasReservas } from '@/lib/mock-data'
 import ConfirmadaClient from '@/components/portal/reservar/ConfirmadaClient'
 
@@ -6,5 +7,9 @@ export function generateStaticParams() {
 }
 
 export default function ConfirmadaPage({ params }: { params: { id: string } }) {
-  return <ConfirmadaClient id={params.id} />
+  return (
+    <Suspense>
+      <ConfirmadaClient id={params.id} />
+    </Suspense>
+  )
 }
