@@ -116,7 +116,7 @@ export default function ListaAvaliacoes({ espacoId, espacoNome, postagens }: Pro
   return (
     <>
       <section className="space-y-4">
-        <h2 className="font-bold text-[#111827] text-lg" style={{ fontFamily: 'Syne, sans-serif' }}>
+        <h2 className="font-bold text-[#111827] text-lg" style={{ fontFamily: 'var(--font-sans)' }}>
           O que os moradores dizem
         </h2>
 

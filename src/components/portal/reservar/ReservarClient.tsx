@@ -89,7 +89,7 @@ export default function ReservarClient({ id }: { id: string }) {
         <div className="max-w-2xl mx-auto px-4 sm:px-6 -mt-2 pb-12 space-y-5">
 
           <div className="bg-white rounded-[14px] shadow-card px-5 py-4">
-            <h1 className="font-bold text-[#111827] text-[17px]" style={{ fontFamily: 'Syne, sans-serif' }}>
+            <h1 className="font-bold text-[#111827] text-[17px]" style={{ fontFamily: 'var(--font-sans)' }}>
               {espaco.nome}
             </h1>
             <p className="text-sm text-[#6B7280] mt-0.5">{espaco.bairro} · {espaco.horario}</p>
@@ -209,7 +209,7 @@ export default function ReservarClient({ id }: { id: string }) {
               </div>
 
               <div className="bg-white rounded-[14px] shadow-card p-5 space-y-4">
-                <h2 className="font-semibold text-[#111827]" style={{ fontFamily: 'Syne, sans-serif' }}>
+                <h2 className="font-semibold text-[#111827]" style={{ fontFamily: 'var(--font-sans)' }}>
                   Seus dados
                 </h2>
                 <div className="space-y-3">

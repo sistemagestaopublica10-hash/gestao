@@ -35,7 +35,7 @@ export default function ConfirmadaClient({ id }: { id: string }) {
             </div>
 
             <div>
-              <h1 className="text-xl font-bold text-[#111827]" style={{ fontFamily: 'Syne, sans-serif' }}>
+              <h1 className="text-xl font-bold text-[#111827]" style={{ fontFamily: 'var(--font-display)' }}>
                 Reserva confirmada!
               </h1>
               <p className="text-sm text-[#6B7280] mt-1">

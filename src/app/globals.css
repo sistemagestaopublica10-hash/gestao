@@ -37,6 +37,10 @@
   --radius-pill: 999px;
   --shadow-card: 0 1px 3px rgba(27,58,107,0.08), 0 1px 2px rgba(0,0,0,0.04);
 
+  /* Sistema de fontes unificado */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-sans:    'Plus Jakarta Sans', system-ui, sans-serif;
+
   /* shadcn/ui CSS variables */
   --background: 0 0% 100%;
   --foreground: 222.2 84% 4.9%;
@@ -61,8 +65,8 @@
 }
 
 body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  color: #111827;
+  font-family: var(--font-sans);
+  color: #111;
 }
 
 @layer base {
@@ -75,8 +79,11 @@ body {
   .text-balance {
     text-wrap: balance;
   }
-  .font-syne {
-    font-family: 'Syne', sans-serif;
+  .font-display {
+    font-family: var(--font-display);
+  }
+  .font-sans {
+    font-family: var(--font-sans);
   }
   .shimmer {
     background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);

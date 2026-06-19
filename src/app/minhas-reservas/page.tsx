@@ -36,7 +36,7 @@ export default function MinhasReservasPage() {
           <div className="max-w-2xl mx-auto">
             <h1
               className="text-white text-2xl sm:text-3xl font-bold"
-              style={{ fontFamily: 'Syne, sans-serif' }}
+              style={{ fontFamily: 'var(--font-display)' }}
             >
               Minhas Reservas
             </h1>
@@ -55,7 +55,7 @@ export default function MinhasReservasPage() {
                 <CalendarDays className="w-8 h-8 text-[#2D5FA6]" />
               </div>
               <div>
-                <p className="font-bold text-[#111827] text-lg" style={{ fontFamily: 'Syne, sans-serif' }}>
+                <p className="font-bold text-[#111827] text-lg" style={{ fontFamily: 'var(--font-sans)' }}>
                   Entre para ver suas reservas
                 </p>
                 <p className="text-sm text-[#6B7280] mt-1">
@@ -88,7 +88,7 @@ export default function MinhasReservasPage() {
               <section>
                 <h2
                   className="text-base font-bold text-[#111827] mb-3"
-                  style={{ fontFamily: 'Syne, sans-serif' }}
+                  style={{ fontFamily: 'var(--font-sans)' }}
                 >
                   Próximas reservas
                 </h2>
@@ -140,7 +140,7 @@ export default function MinhasReservasPage() {
               <section>
                 <h2
                   className="text-base font-bold text-[#111827] mb-3"
-                  style={{ fontFamily: 'Syne, sans-serif' }}
+                  style={{ fontFamily: 'var(--font-sans)' }}
                 >
                   Reservas anteriores
                 </h2>

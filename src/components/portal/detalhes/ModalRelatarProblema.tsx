@@ -47,7 +47,7 @@ export default function ModalRelatarProblema({ espacoNome, onClose, onSubmit }: 
         {/* Header */}
         <div className="flex items-start justify-between p-5 border-b border-[#E5E7EB]">
           <div>
-            <h2 className="font-semibold text-[#111827] text-base" style={{ fontFamily: 'Syne, sans-serif' }}>
+            <h2 className="font-semibold text-[#111827] text-base" style={{ fontFamily: 'var(--font-sans)' }}>
               Relatar problema
             </h2>
             <p className="text-xs text-[#9CA3AF] mt-0.5">{espacoNome}</p>

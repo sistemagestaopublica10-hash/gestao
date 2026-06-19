@@ -27,14 +27,14 @@ export default function EntrarPage() {
         <div className="w-8 h-8 rounded-lg bg-[#1B3A6B] flex items-center justify-center">
           <ShieldCheck className="w-5 h-5 text-white" />
         </div>
-        <span className="font-bold text-[#1B3A6B] text-xl" style={{ fontFamily: 'Syne, sans-serif' }}>
+        <span className="font-bold text-[#1B3A6B] text-xl" style={{ fontFamily: 'var(--font-sans)' }}>
           QuadraGov
         </span>
       </div>
 
       <div className="bg-white rounded-[16px] shadow-card w-full max-w-sm p-6 space-y-6">
         <div className="text-center space-y-1">
-          <h1 className="font-bold text-[#111827] text-lg" style={{ fontFamily: 'Syne, sans-serif' }}>
+          <h1 className="font-bold text-[#111827] text-lg" style={{ fontFamily: 'var(--font-sans)' }}>
             Acesso de demonstração
           </h1>
           <p className="text-sm text-[#9CA3AF]">

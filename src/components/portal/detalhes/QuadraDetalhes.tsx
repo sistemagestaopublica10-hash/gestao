@@ -97,7 +97,7 @@ export default function QuadraDetalhes({ id }: { id: string }) {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-5 pb-4 animate-fade-in">
           <div className="flex items-start justify-between flex-wrap gap-3">
             <div className="min-w-0">
-              <h1 className="text-[22px] sm:text-[26px] font-bold text-[#111827] leading-tight font-syne">
+              <h1 className="text-[22px] sm:text-[26px] font-bold text-[#111827] leading-tight font-display">
                 {espaco.nome}
               </h1>
               <div className="flex items-center gap-3 mt-1.5 flex-wrap text-sm">
@@ -166,13 +166,13 @@ export default function QuadraDetalhes({ id }: { id: string }) {
 
                   {/* Sobre o espaço */}
                   <div className="bg-white rounded-[16px] shadow-card p-5">
-                    <h2 className="font-bold text-[#111827] mb-2 font-syne">Sobre o espaço</h2>
+                    <h2 className="font-bold text-[#111827] mb-2">Sobre o espaço</h2>
                     <p className="text-sm text-[#374151] leading-relaxed">{descricao}</p>
                   </div>
 
                   {/* Modalidades */}
                   <div className="bg-white rounded-[16px] shadow-card p-5">
-                    <h2 className="font-bold text-[#111827] mb-3 font-syne">Modalidades</h2>
+                    <h2 className="font-bold text-[#111827] mb-3">Modalidades</h2>
                     <div className="flex flex-wrap gap-2">
                       {espaco.modalidades.map(m => (
                         <span
@@ -188,7 +188,7 @@ export default function QuadraDetalhes({ id }: { id: string }) {
 
                   {/* Informações rápidas */}
                   <div className="bg-white rounded-[16px] shadow-card p-5">
-                    <h2 className="font-bold text-[#111827] mb-3 font-syne">Informações</h2>
+                    <h2 className="font-bold text-[#111827] mb-3">Informações</h2>
                     <div className="grid grid-cols-2 gap-3">
                       {[
                         { icon: Clock, label: 'Funcionamento', value: espaco.horario },
@@ -248,7 +248,7 @@ export default function QuadraDetalhes({ id }: { id: string }) {
 
                   {/* Header widget */}
                   <div>
-                    <h3 className="font-bold text-[#111827] text-lg font-syne">Reservar agora</h3>
+                    <h3 className="font-bold text-[#111827] text-lg">Reservar agora</h3>
                     <p className="text-sm text-[#9CA3AF]">{espaco.tipo} · Serviço gratuito</p>
                   </div>
 

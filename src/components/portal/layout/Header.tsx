@@ -23,7 +23,7 @@ export default function Header() {
             <ShieldCheck className="w-4 h-4 text-white" />
           </div>
           <div className="flex items-baseline gap-1.5">
-            <span className="font-bold text-[#1B3A6B] text-base leading-none" style={{ fontFamily: 'Syne, sans-serif' }}>
+            <span className="font-bold text-[#1B3A6B] text-base leading-none" style={{ fontFamily: 'var(--font-sans)' }}>
               QuadraGov
             </span>
             <span className="text-xs text-[#9CA3AF] hidden sm:block">

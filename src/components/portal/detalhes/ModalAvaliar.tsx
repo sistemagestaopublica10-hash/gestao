@@ -46,7 +46,7 @@ export default function ModalAvaliar({ espacoNome, reservaInfo, onClose, onSubmi
         {/* Header */}
         <div className="flex items-start justify-between p-5 border-b border-[#E5E7EB]">
           <div>
-            <h2 className="font-semibold text-[#111827] text-base" style={{ fontFamily: 'Syne, sans-serif' }}>
+            <h2 className="font-semibold text-[#111827] text-base" style={{ fontFamily: 'var(--font-sans)' }}>
               Avaliar: {espacoNome}
             </h2>
             {reservaInfo && (
