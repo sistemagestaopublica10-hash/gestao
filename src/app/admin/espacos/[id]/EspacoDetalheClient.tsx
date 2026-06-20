@@ -178,12 +178,12 @@ export default function EspacoDetalheClient({ id }: { id: string }) {
       </div>
 
       {/* Abas */}
-      <div className="flex gap-1 bg-[#F4F7FB] rounded-[10px] p-1">
+      <div className="flex gap-1 bg-[#F4F7FB] rounded-[10px] p-1 overflow-x-auto">
         {abas.map(({ key, label, count }) => (
           <button
             key={key}
             onClick={() => setAba(key)}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-[8px] text-xs font-medium transition-colors ${
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-2 sm:px-3 rounded-[8px] text-[11px] sm:text-xs font-medium transition-colors whitespace-nowrap ${
               aba === key ? 'bg-white text-[#0D1F3C] shadow-sm' : 'text-[#64748B] hover:text-[#0D1F3C]'
             }`}
           >

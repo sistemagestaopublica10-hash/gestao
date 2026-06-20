@@ -65,10 +65,10 @@ export default function UsuariosPage() {
   }
 
   return (
-    <div className="max-w-[1200px] space-y-5">
+    <div className="max-w-[1200px] space-y-4 sm:space-y-5">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-bold text-[#0D1F3C]" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+        <h1 className="text-lg sm:text-xl font-bold text-[#0D1F3C]" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
           Usuários e Pontuação
         </h1>
         <p className="text-sm text-[#64748B] mt-0.5">
@@ -77,16 +77,16 @@ export default function UsuariosPage() {
       </div>
 
       {/* KPIs */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <KpiCard label="Total de usuários" value={totalUsuarios} icon={<Users className="w-5 h-5 text-[#2D5FA6]" />} bg="#E6F0FF" />
         <KpiCard label="Exemplares" value={exemplares} icon={<Trophy className="w-5 h-5 text-[#1A9E60]" />} bg="#D1FAE5" />
         <KpiCard label="Em risco" value={emRisco} icon={<ShieldAlert className="w-5 h-5 text-[#D97706]" />} bg="#FEF3C7" />
         <KpiCard label="Suspensos" value={suspensos} icon={<ShieldAlert className="w-5 h-5 text-[#E53E3E]" />} bg="#FEE2E2" />
       </div>
 
-      {/* Tabela */}
+      {/* Lista de usuários */}
       <div className="bg-white rounded-[12px] shadow-card overflow-hidden">
-        <div className="px-5 py-3 border-b border-[#F1F5F9]">
+        <div className="px-4 sm:px-5 py-3 border-b border-[#F1F5F9]">
           <p className="text-sm font-semibold text-[#0D1F3C]">Lista de usuários</p>
         </div>
         <div className="divide-y divide-[#F1F5F9]">
@@ -99,7 +99,7 @@ export default function UsuariosPage() {
                 : null
 
             return (
-              <div key={u.id} className="px-5 py-4 flex items-center gap-4 hover:bg-[#F8FAFC] transition-colors">
+              <div key={u.id} className="px-4 sm:px-5 py-3 sm:py-4 flex items-center gap-3 hover:bg-[#F8FAFC] transition-colors">
                 {/* Avatar */}
                 <div
                   className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
@@ -111,10 +111,19 @@ export default function UsuariosPage() {
                 {/* Info */}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-[#0D1F3C] truncate">{u.nome}</p>
-                  <p className="text-xs text-[#64748B] truncate">{u.email}</p>
+                  <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                    <p className="text-xs text-[#64748B] truncate hidden sm:block">{u.email}</p>
+                    {/* Classificação inline no mobile */}
+                    <span
+                      className="sm:hidden text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
+                      style={{ background: cls.bg, color: cls.color }}
+                    >
+                      {cls.label}
+                    </span>
+                  </div>
                 </div>
 
-                {/* Classificação */}
+                {/* Classificação — desktop */}
                 <span
                   className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold shrink-0"
                   style={{ background: cls.bg, color: cls.color }}
@@ -127,11 +136,11 @@ export default function UsuariosPage() {
                   <p className="text-base font-bold" style={{ color: cls.color }}>
                     {pontuacao}
                   </p>
-                  <p className="text-[10px] text-[#9CA3AF]">pontos</p>
+                  <p className="text-[10px] text-[#9CA3AF]">pts</p>
                 </div>
 
-                {/* Estrelas */}
-                <div className="hidden md:flex flex-col items-end gap-0.5 shrink-0">
+                {/* Estrelas — só desktop */}
+                <div className="hidden lg:flex flex-col items-end gap-0.5 shrink-0">
                   {notaMedia !== null ? (
                     <>
                       <div className="flex gap-0.5">
@@ -145,17 +154,17 @@ export default function UsuariosPage() {
                       <span className="text-[10px] text-[#9CA3AF]">{notaMedia.toFixed(1)} ({u.avaliacoesUso.length})</span>
                     </>
                   ) : (
-                    <span className="text-[10px] text-[#9CA3AF]">Sem avaliações</span>
+                    <span className="text-[10px] text-[#9CA3AF]">Sem nota</span>
                   )}
                 </div>
 
                 {/* Ação */}
                 <button
                   onClick={() => abrirModal(u)}
-                  className="shrink-0 flex items-center gap-1.5 text-xs text-white bg-[#1B3A6B] hover:bg-[#2D5FA6] px-3 py-1.5 rounded-[8px] transition-colors"
+                  className="shrink-0 flex items-center gap-1 sm:gap-1.5 text-xs text-white bg-[#1B3A6B] hover:bg-[#2D5FA6] px-2.5 sm:px-3 py-1.5 rounded-[8px] transition-colors"
                 >
                   <Star className="w-3.5 h-3.5" />
-                  Avaliar
+                  <span className="hidden sm:inline">Avaliar</span>
                 </button>
               </div>
             )

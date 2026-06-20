@@ -28,9 +28,9 @@ export default function PortalNav({ variant }: { variant: 'hero' | 'bottom' }) {
 
   const authItem = {
     label: user ? user.nome.split(' ')[0] : 'Entrar',
-    href: user ? '/minhas-reservas' : '/entrar',
+    href: user ? (user.role === 'cidadao' ? '/perfil' : '/admin/dashboard') : '/entrar',
     icon: user ? UserCircle : LogIn,
-    isActive: (p: string) => !user && p === '/entrar',
+    isActive: (p: string) => p === '/perfil' || (!user && p === '/entrar'),
   }
 
   const allItems = [...coreItems, authItem]

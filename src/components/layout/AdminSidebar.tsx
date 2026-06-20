@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   ExternalLink,
   Users,
+  X,
 } from 'lucide-react'
 import { useAuthStore } from '@/lib/auth-store'
 import { mockGestor } from '@/lib/mock-data'
@@ -25,7 +26,12 @@ const navItems = [
   { href: '/admin/relatorios', label: 'Relatórios', icon: BarChart2 },
 ]
 
-export default function AdminSidebar() {
+interface Props {
+  isOpen?: boolean
+  onClose?: () => void
+}
+
+export default function AdminSidebar({ isOpen = false, onClose }: Props) {
   const pathname = usePathname()
   const router = useRouter()
   const { user, logout } = useAuthStore()
@@ -37,19 +43,30 @@ export default function AdminSidebar() {
     router.push('/entrar')
   }
 
-  return (
-    <aside className="w-[240px] min-h-screen flex flex-col bg-[#0D1F3C] shrink-0">
-      {/* Logo */}
-      <div className="px-5 py-5 border-b border-[#1B3A6B]">
-        <div className="flex items-center gap-2 mb-1">
-          <div className="w-7 h-7 rounded-md bg-[#2D5FA6] flex items-center justify-center">
-            <ShieldCheck className="w-4 h-4 text-white" />
+  const sidebar = (
+    <aside className="w-[240px] min-h-screen flex flex-col bg-[#0D1F3C] shrink-0 h-full">
+      {/* Logo + fechar mobile */}
+      <div className="px-5 py-5 border-b border-[#1B3A6B] flex items-start justify-between">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-7 h-7 rounded-md bg-[#2D5FA6] flex items-center justify-center">
+              <ShieldCheck className="w-4 h-4 text-white" />
+            </div>
+            <span className="text-white text-base font-bold" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+              QuadraGov
+            </span>
           </div>
-          <span className="text-white text-base font-bold" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-            QuadraGov
-          </span>
+          <p className="text-[11px] text-[#64748B] ml-9">{mockGestor.municipio}</p>
         </div>
-        <p className="text-[11px] text-[#64748B] ml-9">{mockGestor.municipio}</p>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="md:hidden p-1 rounded text-[#64748B] hover:text-white transition-colors mt-0.5"
+            aria-label="Fechar menu"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
       </div>
 
       {/* Nav */}
@@ -60,6 +77,7 @@ export default function AdminSidebar() {
             <Link
               key={href}
               href={href}
+              onClick={onClose}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors ${
                 active
                   ? 'bg-[#1B3A6B] text-white border-l-[3px] border-[#2D5FA6] pl-[9px]'
@@ -72,10 +90,10 @@ export default function AdminSidebar() {
           )
         })}
 
-        {/* Separador + link portal */}
         <div className="pt-3 mt-3 border-t border-[#1B3A6B]">
           <Link
             href="/inicio"
+            onClick={onClose}
             className="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm text-[#64748B] hover:bg-[#1B3A6B]/50 hover:text-white transition-colors"
           >
             <ExternalLink className="w-4 h-4 shrink-0" />
@@ -105,5 +123,22 @@ export default function AdminSidebar() {
         </button>
       </div>
     </aside>
+  )
+
+  return (
+    <>
+      {/* Desktop: always visible */}
+      <div className="hidden md:flex">{sidebar}</div>
+
+      {/* Mobile: drawer overlay */}
+      {isOpen && (
+        <div className="md:hidden fixed inset-0 z-50 flex">
+          <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+          <div className="relative z-10 h-full overflow-y-auto">
+            {sidebar}
+          </div>
+        </div>
+      )}
+    </>
   )
 }

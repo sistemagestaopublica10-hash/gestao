@@ -63,7 +63,7 @@ export default function AvaliacoesPage() {
       </div>
 
       {/* KPIs */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <KpiCard
           label="Total de avaliações"
           value={totalAvaliacoes}
@@ -85,7 +85,7 @@ export default function AvaliacoesPage() {
       </div>
 
       {/* Filtros */}
-      <div className="bg-white rounded-[12px] shadow-card p-4 flex flex-wrap items-center gap-3">
+      <div className="bg-white rounded-[12px] shadow-card p-4 flex flex-wrap items-start sm:items-center gap-3">
         {/* Abas ativos/ocultados */}
         <div className="flex rounded-[8px] border border-[#E5E7EB] overflow-hidden">
           <button

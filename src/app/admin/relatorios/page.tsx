@@ -53,7 +53,7 @@ export default function RelatoriosPage() {
             Período do relatório
           </h2>
         </div>
-        <div className="flex flex-wrap items-end gap-4">
+        <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-end gap-3">
           <div>
             <label className="block text-xs font-semibold text-[#374151] mb-1.5">Data início</label>
             <input
@@ -85,7 +85,7 @@ export default function RelatoriosPage() {
       {gerado && (
         <>
           {/* KPI sumário */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <SumCard label="Total de reservas" value={totalReservas} color="#1B3A6B" bg="#E6F0FF" />
             <SumCard label="Cancelamentos" value={totalCancelamentos} color="#E53E3E" bg="#FEE2E2" />
             <SumCard label="Nota geral" value={`⭐ ${notaGeral}`} color="#D97706" bg="#FEF3C7" isText />
@@ -103,7 +103,7 @@ export default function RelatoriosPage() {
               <BarChart
                 data={mockRelatorioData}
                 layout="vertical"
-                margin={{ top: 0, right: 20, bottom: 0, left: 140 }}
+                margin={{ top: 0, right: 10, bottom: 0, left: 0 }}
               >
                 <XAxis type="number" tick={{ fontSize: 11, fill: '#9CA3AF' }} axisLine={false} tickLine={false} />
                 <YAxis
@@ -130,7 +130,7 @@ export default function RelatoriosPage() {
 
           {/* Tabela detalhada */}
           <div className="bg-white rounded-[12px] shadow-card overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-[#F1F5F9]">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-5 py-4 border-b border-[#F1F5F9] gap-3">
               <h2 className="font-semibold text-sm text-[#0D1F3C]" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
                 Detalhamento por espaço
               </h2>
@@ -151,7 +151,8 @@ export default function RelatoriosPage() {
                 </button>
               </div>
             </div>
-            <table className="w-full text-sm">
+            <div className="overflow-x-auto">
+            <table className="w-full text-sm min-w-[500px]">
               <thead>
                 <tr className="border-b border-[#F1F5F9]">
                   <th className="text-left px-5 py-3 text-xs font-semibold text-[#64748B] uppercase tracking-wider">Espaço</th>
@@ -204,6 +205,7 @@ export default function RelatoriosPage() {
                 </tr>
               </tfoot>
             </table>
+            </div>
           </div>
         </>
       )}

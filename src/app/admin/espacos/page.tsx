@@ -313,7 +313,8 @@ export default function EspacosPage() {
 
       {/* Table */}
       <div className="bg-white rounded-[12px] shadow-card overflow-hidden">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[600px]">
           <thead>
             <tr className="border-b border-[#F1F5F9]">
               <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B] uppercase tracking-wider w-[52px]">Foto</th>
@@ -387,6 +388,7 @@ export default function EspacosPage() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Sheet */}

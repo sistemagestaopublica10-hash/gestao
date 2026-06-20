@@ -235,16 +235,16 @@ export default function PerfilPage() {
             </div>
             <div className="space-y-2">
               {[
-                { range: '90–100', label: 'Exemplar', color: '#1A9E60', bg: '#D1FAE5' },
-                { range: '70–89',  label: 'Bom Usuário', color: '#2D5FA6', bg: '#E6F0FF' },
-                { range: '50–69',  label: 'Regular', color: '#D97706', bg: '#FEF3C7' },
-                { range: '25–49',  label: 'Em Risco', color: '#E53E3E', bg: '#FEE2E2' },
-                { range: '0–24',   label: 'Suspenso', color: '#7C3AED', bg: '#EDE9FE' },
-              ].map(({ range, label, color, bg }) => (
+                { min: 90, range: '90–100', label: 'Exemplar',    color: '#1A9E60', bg: '#D1FAE5' },
+                { min: 70, range: '70–89',  label: 'Bom Usuário', color: '#2D5FA6', bg: '#E6F0FF' },
+                { min: 50, range: '50–69',  label: 'Regular',     color: '#D97706', bg: '#FEF3C7' },
+                { min: 25, range: '25–49',  label: 'Em Risco',    color: '#E53E3E', bg: '#FEE2E2' },
+                { min: 0,  range: '0–24',   label: 'Suspenso',    color: '#7C3AED', bg: '#EDE9FE' },
+              ].map(({ min, range, label, color, bg }) => (
                 <div
                   key={range}
                   className="flex items-center justify-between px-3 py-1.5 rounded-[8px]"
-                  style={{ background: pontuacao >= parseInt(range) ? bg : 'transparent', opacity: pontuacao < parseInt(range) ? 0.5 : 1 }}
+                  style={{ background: pontuacao >= min ? bg : 'transparent', opacity: pontuacao < min ? 0.45 : 1 }}
                 >
                   <span className="text-xs text-[#374151] font-medium">{range} pts</span>
                   <span
