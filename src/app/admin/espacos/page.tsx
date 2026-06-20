@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Plus, MoreVertical, Pencil, PowerOff, X, Check } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Plus, MoreVertical, Pencil, PowerOff, X, Check, ChevronRight } from 'lucide-react'
 import { mockEspacos } from '@/lib/mock-data'
 
 type Espaco = typeof mockEspacos[number]
@@ -258,6 +259,7 @@ function MenuEspaco({ onEditar, onDesativar }: { onEditar: () => void; onDesativ
 }
 
 export default function EspacosPage() {
+  const router = useRouter()
   const [espacos, setEspacos] = useState(mockEspacos)
   const [sheetOpen, setSheetOpen] = useState(false)
   const [editando, setEditando] = useState<Espaco | null>(null)
@@ -320,12 +322,12 @@ export default function EspacosPage() {
               <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B] uppercase tracking-wider hidden md:table-cell">Tipo</th>
               <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B] uppercase tracking-wider hidden lg:table-cell">Modalidades</th>
               <th className="text-left px-4 py-3 text-xs font-semibold text-[#64748B] uppercase tracking-wider">Status</th>
-              <th className="px-4 py-3 w-10" />
+              <th className="px-4 py-3 w-16" />
             </tr>
           </thead>
           <tbody>
             {espacos.map(e => (
-              <tr key={e.id} className="border-b border-[#F8FAFC] hover:bg-[#F8FAFC] transition-colors">
+              <tr key={e.id} className="border-b border-[#F8FAFC] hover:bg-[#F8FAFC] transition-colors group">
                 <td className="px-4 py-3">
                   <div
                     className="w-10 h-10 rounded-[8px] flex items-center justify-center text-lg shrink-0"
@@ -335,7 +337,12 @@ export default function EspacosPage() {
                   </div>
                 </td>
                 <td className="px-4 py-3">
-                  <p className="font-medium text-[#111827]">{e.nome}</p>
+                  <button
+                    onClick={() => router.push(`/admin/espacos/${e.id}`)}
+                    className="font-medium text-[#111827] hover:text-[#2D5FA6] hover:underline text-left"
+                  >
+                    {e.nome}
+                  </button>
                 </td>
                 <td className="px-4 py-3 text-[#64748B]">{e.bairro}</td>
                 <td className="px-4 py-3 text-[#64748B] hidden md:table-cell">{e.tipo}</td>
@@ -362,10 +369,19 @@ export default function EspacosPage() {
                   )}
                 </td>
                 <td className="px-4 py-3">
-                  <MenuEspaco
-                    onEditar={() => abrirEditar(e)}
-                    onDesativar={() => setConfirmId(e.id)}
-                  />
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => router.push(`/admin/espacos/${e.id}`)}
+                      className="p-1.5 rounded-md text-[#64748B] hover:bg-[#E6F0FF] hover:text-[#1B3A6B] transition-colors opacity-0 group-hover:opacity-100"
+                      title="Ver detalhes"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                    <MenuEspaco
+                      onEditar={() => abrirEditar(e)}
+                      onDesativar={() => setConfirmId(e.id)}
+                    />
+                  </div>
                 </td>
               </tr>
             ))}

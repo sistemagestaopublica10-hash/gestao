@@ -57,12 +57,25 @@ export default function Header() {
 
               {/* Avatar + nome + sair */}
               <div className="flex items-center gap-2 pl-2 border-l border-[#E5E7EB]">
-                <div className="w-7 h-7 rounded-full bg-[#1B3A6B] flex items-center justify-center text-white text-[11px] font-bold">
-                  {user.avatar}
-                </div>
-                <span className="text-xs font-medium text-[#374151] hidden sm:block max-w-[100px] truncate">
-                  {user.nome.split(' ')[0]}
-                </span>
+                {user.role === 'cidadao' ? (
+                  <Link href="/perfil" className="flex items-center gap-2 group" aria-label="Ver meu perfil">
+                    <div className="w-7 h-7 rounded-full bg-[#1B3A6B] group-hover:bg-[#2D5FA6] flex items-center justify-center text-white text-[11px] font-bold transition-colors">
+                      {user.avatar}
+                    </div>
+                    <span className="text-xs font-medium text-[#374151] group-hover:text-[#1B3A6B] hidden sm:block max-w-[100px] truncate transition-colors">
+                      {user.nome.split(' ')[0]}
+                    </span>
+                  </Link>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-full bg-[#1B3A6B] flex items-center justify-center text-white text-[11px] font-bold">
+                      {user.avatar}
+                    </div>
+                    <span className="text-xs font-medium text-[#374151] hidden sm:block max-w-[100px] truncate">
+                      {user.nome.split(' ')[0]}
+                    </span>
+                  </div>
+                )}
                 <button
                   onClick={handleLogout}
                   aria-label="Sair"

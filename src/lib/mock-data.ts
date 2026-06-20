@@ -200,3 +200,145 @@ export const mockMunicipio = {
   nome: 'Colatina',
   estado: 'ES',
 }
+
+// ── Sistema de pontuação de usuários ────────────────────────────────────────
+
+export type AvaliacaoUso = {
+  id: string
+  reservaId: string
+  espacoId: string
+  espacoNome: string
+  dataReserva: string
+  dataAvaliacao: string
+  nota: number // 1–5
+  comentario: string
+  avaliador: string
+}
+
+export type UsuarioMock = {
+  id: string
+  nome: string
+  email: string
+  avatar: string
+  totalReservas: number
+  avaliacoesUso: AvaliacaoUso[]
+}
+
+export const mockUsuarios: UsuarioMock[] = [
+  {
+    id: 'joao-silva',
+    nome: 'João Silva',
+    email: 'joao@demo.com',
+    avatar: 'JS',
+    totalReservas: 3,
+    avaliacoesUso: [
+      {
+        id: 'au-1',
+        reservaId: '2024-0801',
+        espacoId: '3',
+        espacoNome: 'Campo Aberto do Parque Sul',
+        dataReserva: '2026-06-10',
+        dataAvaliacao: '2026-06-11',
+        nota: 4,
+        comentario: 'Deixou o local bem organizado. Sem reclamações.',
+        avaliador: 'João Mendonça',
+      },
+      {
+        id: 'au-2',
+        reservaId: '2024-0756',
+        espacoId: '2',
+        espacoNome: 'Quadra Society Norte',
+        dataReserva: '2026-06-08',
+        dataAvaliacao: '2026-06-09',
+        nota: 2,
+        comentario: 'Deixou lixo na quadra e não organizou o espaço adequadamente.',
+        avaliador: 'João Mendonça',
+      },
+    ],
+  },
+  {
+    id: 'maria-oliveira',
+    nome: 'Maria Oliveira',
+    email: 'maria@demo.com',
+    avatar: 'MO',
+    totalReservas: 5,
+    avaliacoesUso: [
+      {
+        id: 'au-3',
+        reservaId: '2024-0720',
+        espacoId: '1',
+        espacoNome: 'Quadra Central de Tênis',
+        dataReserva: '2026-06-05',
+        dataAvaliacao: '2026-06-06',
+        nota: 5,
+        comentario: 'Excelente! Quadra impecável após o uso.',
+        avaliador: 'João Mendonça',
+      },
+      {
+        id: 'au-4',
+        reservaId: '2024-0698',
+        espacoId: '1',
+        espacoNome: 'Quadra Central de Tênis',
+        dataReserva: '2026-05-28',
+        dataAvaliacao: '2026-05-29',
+        nota: 5,
+        comentario: 'Usuária exemplar, sempre mantém o espaço limpo.',
+        avaliador: 'João Mendonça',
+      },
+    ],
+  },
+  {
+    id: 'pedro-santos',
+    nome: 'Pedro Santos',
+    email: 'pedro@demo.com',
+    avatar: 'PS',
+    totalReservas: 2,
+    avaliacoesUso: [
+      {
+        id: 'au-5',
+        reservaId: '2024-0710',
+        espacoId: '2',
+        espacoNome: 'Quadra Society Norte',
+        dataReserva: '2026-06-03',
+        dataAvaliacao: '2026-06-04',
+        nota: 1,
+        comentario: 'Danificou a rede da quadra e deixou o local em péssimas condições.',
+        avaliador: 'João Mendonça',
+      },
+    ],
+  },
+  {
+    id: 'ana-lima',
+    nome: 'Ana Lima',
+    email: 'ana@demo.com',
+    avatar: 'AL',
+    totalReservas: 1,
+    avaliacoesUso: [],
+  },
+]
+
+const PONTOS_REDUCAO: Record<number, number> = { 5: 0, 4: 5, 3: 15, 2: 25, 1: 40 }
+
+export function calcularPontuacao(avaliacoes: AvaliacaoUso[]): number {
+  if (avaliacoes.length === 0) return 100
+  const total = avaliacoes.reduce(
+    (acc, av) => acc - (PONTOS_REDUCAO[av.nota] ?? 0),
+    100,
+  )
+  return Math.max(0, Math.min(100, total))
+}
+
+export type Classificacao = {
+  label: string
+  color: string
+  bg: string
+  ring: string
+}
+
+export function classificarPerfil(pontuacao: number): Classificacao {
+  if (pontuacao >= 90) return { label: 'Exemplar',    color: '#1A9E60', bg: '#D1FAE5', ring: '#1A9E60' }
+  if (pontuacao >= 70) return { label: 'Bom Usuário', color: '#2D5FA6', bg: '#E6F0FF', ring: '#2D5FA6' }
+  if (pontuacao >= 50) return { label: 'Regular',     color: '#D97706', bg: '#FEF3C7', ring: '#D97706' }
+  if (pontuacao >= 25) return { label: 'Em Risco',    color: '#E53E3E', bg: '#FEE2E2', ring: '#E53E3E' }
+  return                      { label: 'Suspenso',    color: '#7C3AED', bg: '#EDE9FE', ring: '#7C3AED' }
+}

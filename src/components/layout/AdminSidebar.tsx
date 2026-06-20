@@ -11,16 +11,18 @@ import {
   LogOut,
   ShieldCheck,
   ExternalLink,
+  Users,
 } from 'lucide-react'
 import { useAuthStore } from '@/lib/auth-store'
 import { mockGestor } from '@/lib/mock-data'
 
 const navItems = [
-  { href: '/admin/dashboard', label: 'Dashboard',  icon: LayoutDashboard },
-  { href: '/admin/espacos',   label: 'Espaços',    icon: MapPin },
-  { href: '/admin/agenda',    label: 'Agenda',     icon: CalendarDays },
-  { href: '/admin/avaliacoes',label: 'Avaliações', icon: Star },
-  { href: '/admin/relatorios',label: 'Relatórios', icon: BarChart2 },
+  { href: '/admin/dashboard',  label: 'Dashboard',  icon: LayoutDashboard },
+  { href: '/admin/espacos',    label: 'Espaços',    icon: MapPin },
+  { href: '/admin/agenda',     label: 'Agenda',     icon: CalendarDays },
+  { href: '/admin/avaliacoes', label: 'Avaliações', icon: Star },
+  { href: '/admin/usuarios',   label: 'Usuários',   icon: Users },
+  { href: '/admin/relatorios', label: 'Relatórios', icon: BarChart2 },
 ]
 
 export default function AdminSidebar() {
