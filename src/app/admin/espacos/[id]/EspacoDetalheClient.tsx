@@ -24,7 +24,7 @@ import {
   type UsuarioMock,
 } from '@/lib/mock-data'
 
-type Aba = 'detalhes' | 'avaliacoes' | 'relatos' | 'avaliar-usuario'
+type Aba = 'detalhes' | 'estatisticas' | 'avaliacoes' | 'relatos' | 'avaliar-usuario'
 type StatusProblema = 'aberto' | 'em_andamento' | 'resolvido'
 
 function EstrelaRow({ nota }: { nota: number }) {
@@ -125,11 +125,47 @@ export default function EspacoDetalheClient({ id }: { id: string }) {
     )
   }
 
+  // ── Estatísticas derivadas ──────────────────────────────
+  const MESES_LABEL = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
+  const DIAS_LABEL  = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb']
+  const anoAtual    = new Date().getFullYear()
+  const mesAtual    = new Date().getMonth()
+
+  const reservasPorMes = MESES_LABEL.map((_, m) => ({
+    label: MESES_LABEL[m],
+    value: reservasDaQuadra.filter(r => {
+      const d = new Date(r.data); return d.getFullYear() === anoAtual && d.getMonth() === m
+    }).length,
+  }))
+
+  const reservasPorDiaSemana = DIAS_LABEL.map((label, di) => ({
+    label,
+    value: reservasDaQuadra.filter(r => new Date(r.data).getDay() === di).length,
+  }))
+
+  const reservasPorHora = ['07','08','09','10','11','12','13','14','15','16','17','18','19','20','21'].map(h => ({
+    label: h,
+    value: reservasDaQuadra.filter(r => r.horaInicio.startsWith(h)).length,
+  }))
+
+  const reservasMesAtual = reservasDaQuadra.filter(r => {
+    const d = new Date(r.data); return d.getFullYear() === anoAtual && d.getMonth() === mesAtual
+  }).length
+  const slotsNoMes    = 30 * 15  // 30 dias × 15 horários/dia
+  const taxaOcupacao  = Math.min(100, Math.round((reservasMesAtual / slotsNoMes) * 100))
+
+  const maxMes      = Math.max(1, ...reservasPorMes.map(x => x.value))
+  const maxDia      = Math.max(1, ...reservasPorDiaSemana.map(x => x.value))
+  const maxHora     = Math.max(1, ...reservasPorHora.map(x => x.value))
+  const horaPico    = reservasPorHora.reduce((best, h) => h.value > best.value ? h : best, reservasPorHora[0])
+  const diaPico     = reservasPorDiaSemana.reduce((best, d) => d.value > best.value ? d : best, reservasPorDiaSemana[0])
+
   const abas: { key: Aba; label: string; count?: number }[] = [
-    { key: 'detalhes', label: 'Detalhes' },
-    { key: 'avaliacoes', label: 'Avaliações', count: avaliacoesDaQuadra.length },
-    { key: 'relatos', label: 'Relatos', count: relatosDaQuadra.length },
-    { key: 'avaliar-usuario', label: 'Avaliar Usuário', count: reservasDaQuadra.length },
+    { key: 'detalhes',       label: 'Detalhes' },
+    { key: 'estatisticas',   label: 'Estatísticas' },
+    { key: 'avaliacoes',     label: 'Avaliações', count: avaliacoesDaQuadra.length },
+    { key: 'relatos',        label: 'Relatos',    count: relatosDaQuadra.length },
+    { key: 'avaliar-usuario',label: 'Avaliar Usuário', count: reservasDaQuadra.length },
   ]
 
   return (
@@ -231,6 +267,126 @@ export default function EspacoDetalheClient({ id }: { id: string }) {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* ── Estatísticas ─────────────────────────────────── */}
+      {aba === 'estatisticas' && (
+        <div className="space-y-5">
+
+          {/* KPIs rápidos */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {[
+              { label: 'Reservas este mês', value: reservasMesAtual, color: '#2D5FA6', bg: '#E6F0FF' },
+              { label: 'Reservas no ano', value: reservasDaQuadra.filter(r => new Date(r.data).getFullYear() === anoAtual).length, color: '#1A9E60', bg: '#D1FAE5' },
+              { label: 'Taxa de ocupação', value: `${taxaOcupacao}%`, color: '#D97706', bg: '#FEF3C7' },
+              { label: 'Total de reservas', value: reservasDaQuadra.length, color: '#7C3AED', bg: '#EDE9FE' },
+            ].map(kpi => (
+              <div key={kpi.label} className="bg-white rounded-[12px] shadow-card p-4">
+                <div className="w-8 h-8 rounded-[8px] flex items-center justify-center mb-2" style={{ background: kpi.bg }}>
+                  <span style={{ color: kpi.color, fontSize: 14, fontWeight: 700 }}>
+                    {typeof kpi.value === 'number' ? kpi.value : kpi.value[0]}
+                  </span>
+                </div>
+                <p className="text-xl font-bold text-[#0D1F3C]" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+                  {kpi.value}
+                </p>
+                <p className="text-xs text-[#64748B] mt-0.5">{kpi.label}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Reservas por mês */}
+          <div className="bg-white rounded-[14px] shadow-card p-5">
+            <h3 className="text-sm font-bold text-[#0D1F3C] mb-4">Reservas por mês ({anoAtual})</h3>
+            <div className="flex items-end gap-1.5 h-28">
+              {reservasPorMes.map(({ label, value }) => (
+                <div key={label} className="flex-1 flex flex-col items-center gap-1">
+                  <span className="text-[9px] text-[#9CA3AF]">{value || ''}</span>
+                  <div
+                    className="w-full rounded-t-[3px] transition-all"
+                    style={{
+                      height: `${Math.max(value > 0 ? 6 : 0, (value / maxMes) * 80)}px`,
+                      background: label === MESES_LABEL[mesAtual] ? '#1B3A6B' : '#93C5FD',
+                    }}
+                  />
+                  <span className="text-[9px] text-[#9CA3AF]">{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Horário + Dia lado a lado */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+            {/* Horário mais utilizado */}
+            <div className="bg-white rounded-[14px] shadow-card p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-bold text-[#0D1F3C]">Horário mais utilizado</h3>
+                <span className="text-xs font-semibold text-[#2D5FA6] bg-[#E6F0FF] px-2 py-0.5 rounded-full">
+                  {horaPico.label}h
+                </span>
+              </div>
+              <div className="flex items-end gap-1 h-20">
+                {reservasPorHora.map(({ label, value }) => (
+                  <div key={label} className="flex-1 flex flex-col items-center gap-0.5">
+                    <div
+                      className="w-full rounded-t-[2px]"
+                      style={{
+                        height: `${Math.max(value > 0 ? 4 : 0, (value / maxHora) * 64)}px`,
+                        background: label === horaPico.label ? '#1B3A6B' : '#BFDBFE',
+                      }}
+                    />
+                    <span className="text-[7px] text-[#9CA3AF]">{label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Dia mais utilizado */}
+            <div className="bg-white rounded-[14px] shadow-card p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-bold text-[#0D1F3C]">Dia mais utilizado</h3>
+                <span className="text-xs font-semibold text-[#1A9E60] bg-[#D1FAE5] px-2 py-0.5 rounded-full">
+                  {diaPico.label}
+                </span>
+              </div>
+              <div className="flex items-end gap-2 h-20">
+                {reservasPorDiaSemana.map(({ label, value }) => (
+                  <div key={label} className="flex-1 flex flex-col items-center gap-0.5">
+                    <div
+                      className="w-full rounded-t-[2px]"
+                      style={{
+                        height: `${Math.max(value > 0 ? 4 : 0, (value / maxDia) * 64)}px`,
+                        background: label === diaPico.label ? '#1A9E60' : '#A7F3D0',
+                      }}
+                    />
+                    <span className="text-[9px] text-[#9CA3AF]">{label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Taxa de ocupação — barra de progresso */}
+          <div className="bg-white rounded-[14px] shadow-card p-5">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-bold text-[#0D1F3C]">Taxa de ocupação (mês atual)</h3>
+              <span className="text-lg font-bold text-[#D97706]">{taxaOcupacao}%</span>
+            </div>
+            <div className="h-3 bg-[#F1F5F9] rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all"
+                style={{
+                  width: `${taxaOcupacao}%`,
+                  background: taxaOcupacao > 70 ? '#1A9E60' : taxaOcupacao > 40 ? '#D97706' : '#2D5FA6',
+                }}
+              />
+            </div>
+            <p className="text-xs text-[#9CA3AF] mt-2">
+              {reservasMesAtual} reservas de {slotsNoMes} slots disponíveis neste mês
+            </p>
+          </div>
         </div>
       )}
 
