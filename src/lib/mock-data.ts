@@ -342,3 +342,186 @@ export function classificarPerfil(pontuacao: number): Classificacao {
   if (pontuacao >= 25) return { label: 'Em Risco',    color: '#E53E3E', bg: '#FEE2E2', ring: '#E53E3E' }
   return                      { label: 'Suspenso',    color: '#7C3AED', bg: '#EDE9FE', ring: '#7C3AED' }
 }
+
+// ── Métricas por quadra ──────────────────────────────────────────────────────
+
+export type MetricasQuadra = {
+  espacoId: string
+  taxaOcupacao: number
+  totalReservasMes: number
+  notaMedia: number
+  totalAvaliacoes: number
+  ocupacaoPorHora: { hora: string; ocupacao: number }[]
+  diasSemana: { dia: string; reservas: number }[]
+  reclamacoesComuns: { descricao: string; count: number }[]
+  sugestoesEvento: string[]
+}
+
+export const mockMetricasQuadras: MetricasQuadra[] = [
+  {
+    espacoId: '1',
+    taxaOcupacao: 84,
+    totalReservasMes: 98,
+    notaMedia: 4.3,
+    totalAvaliacoes: 127,
+    ocupacaoPorHora: [
+      { hora: '07:00', ocupacao: 40 }, { hora: '08:00', ocupacao: 75 },
+      { hora: '09:00', ocupacao: 90 }, { hora: '10:00', ocupacao: 85 },
+      { hora: '11:00', ocupacao: 60 }, { hora: '12:00', ocupacao: 20 },
+      { hora: '13:00', ocupacao: 15 }, { hora: '14:00', ocupacao: 45 },
+      { hora: '15:00', ocupacao: 55 }, { hora: '16:00', ocupacao: 80 },
+      { hora: '17:00', ocupacao: 95 }, { hora: '18:00', ocupacao: 100 },
+      { hora: '19:00', ocupacao: 90 }, { hora: '20:00', ocupacao: 70 },
+      { hora: '21:00', ocupacao: 40 },
+    ],
+    diasSemana: [
+      { dia: 'Seg', reservas: 14 }, { dia: 'Ter', reservas: 12 },
+      { dia: 'Qua', reservas: 18 }, { dia: 'Qui', reservas: 16 },
+      { dia: 'Sex', reservas: 20 }, { dia: 'Sáb', reservas: 22 },
+      { dia: 'Dom', reservas: 10 },
+    ],
+    reclamacoesComuns: [
+      { descricao: 'Rede precisa de troca', count: 4 },
+      { descricao: 'Iluminação apagada no lado norte', count: 2 },
+      { descricao: 'Falta de bebedouro', count: 1 },
+    ],
+    sugestoesEvento: [
+      'Torneio de Tênis Amador — final de semana de alto movimento (Sáb/Dom)',
+      'Aulas abertas de tênis para jovens — manhãs de sábado (horário mais cheio)',
+      'Campeonato Interescolar de Tênis — horário de baixa (12h–14h) para treinos',
+    ],
+  },
+  {
+    espacoId: '2',
+    taxaOcupacao: 61,
+    totalReservasMes: 112,
+    notaMedia: 2.8,
+    totalAvaliacoes: 43,
+    ocupacaoPorHora: [
+      { hora: '07:00', ocupacao: 30 }, { hora: '08:00', ocupacao: 55 },
+      { hora: '09:00', ocupacao: 70 }, { hora: '10:00', ocupacao: 60 },
+      { hora: '11:00', ocupacao: 45 }, { hora: '12:00', ocupacao: 10 },
+      { hora: '13:00', ocupacao: 5  }, { hora: '14:00', ocupacao: 30 },
+      { hora: '15:00', ocupacao: 40 }, { hora: '16:00', ocupacao: 65 },
+      { hora: '17:00', ocupacao: 75 }, { hora: '18:00', ocupacao: 80 },
+      { hora: '19:00', ocupacao: 85 }, { hora: '20:00', ocupacao: 60 },
+      { hora: '21:00', ocupacao: 20 },
+    ],
+    diasSemana: [
+      { dia: 'Seg', reservas: 16 }, { dia: 'Ter', reservas: 14 },
+      { dia: 'Qua', reservas: 19 }, { dia: 'Qui', reservas: 17 },
+      { dia: 'Sex', reservas: 22 }, { dia: 'Sáb', reservas: 24 },
+      { dia: 'Dom', reservas: 8  },
+    ],
+    reclamacoesComuns: [
+      { descricao: 'Rede rasgada do lado direito', count: 7 },
+      { descricao: 'Buraco no piso lateral', count: 5 },
+      { descricao: 'Falta de iluminação noturna', count: 3 },
+      { descricao: 'Banheiros sem água', count: 2 },
+    ],
+    sugestoesEvento: [
+      'Mutirão de manutenção — prioridade antes de qualquer evento público',
+      'Copa de Futsal da Comunidade Norte — após resolução da rede',
+      'Treino aberto de basquete — noites de sexta (alta demanda às 19h)',
+    ],
+  },
+  {
+    espacoId: '3',
+    taxaOcupacao: 72,
+    totalReservasMes: 76,
+    notaMedia: 4.7,
+    totalAvaliacoes: 89,
+    ocupacaoPorHora: [
+      { hora: '07:00', ocupacao: 20 }, { hora: '08:00', ocupacao: 35 },
+      { hora: '09:00', ocupacao: 50 }, { hora: '10:00', ocupacao: 45 },
+      { hora: '11:00', ocupacao: 40 }, { hora: '12:00', ocupacao: 10 },
+      { hora: '13:00', ocupacao: 5  }, { hora: '14:00', ocupacao: 60 },
+      { hora: '15:00', ocupacao: 85 }, { hora: '16:00', ocupacao: 95 },
+      { hora: '17:00', ocupacao: 100 },{ hora: '18:00', ocupacao: 90 },
+      { hora: '19:00', ocupacao: 70 }, { hora: '20:00', ocupacao: 40 },
+    ],
+    diasSemana: [
+      { dia: 'Seg', reservas: 8  }, { dia: 'Ter', reservas: 9  },
+      { dia: 'Qua', reservas: 11 }, { dia: 'Qui', reservas: 10 },
+      { dia: 'Sex', reservas: 14 }, { dia: 'Sáb', reservas: 18 },
+      { dia: 'Dom', reservas: 16 },
+    ],
+    reclamacoesComuns: [
+      { descricao: 'Falta de iluminação para horário noturno', count: 2 },
+      { descricao: 'Bebedouro quebrado', count: 1 },
+    ],
+    sugestoesEvento: [
+      'Festival de Vôlei de Areia — tarde de sábado (pico máximo: 15h–18h)',
+      'Aulas de vôlei para terceira idade — manhãs de segunda (baixo movimento)',
+      'Campeonato Municipal de Vôlei — horário nobre 16h–19h',
+    ],
+  },
+  {
+    espacoId: '4',
+    taxaOcupacao: 28,
+    totalReservasMes: 26,
+    notaMedia: 3.9,
+    totalAvaliacoes: 38,
+    ocupacaoPorHora: [
+      { hora: '07:00', ocupacao: 5  }, { hora: '08:00', ocupacao: 10 },
+      { hora: '09:00', ocupacao: 20 }, { hora: '10:00', ocupacao: 25 },
+      { hora: '11:00', ocupacao: 20 }, { hora: '12:00', ocupacao: 5  },
+      { hora: '13:00', ocupacao: 5  }, { hora: '14:00', ocupacao: 15 },
+      { hora: '15:00', ocupacao: 30 }, { hora: '16:00', ocupacao: 35 },
+      { hora: '17:00', ocupacao: 40 }, { hora: '18:00', ocupacao: 30 },
+      { hora: '19:00', ocupacao: 15 }, { hora: '20:00', ocupacao: 5  },
+    ],
+    diasSemana: [
+      { dia: 'Seg', reservas: 2 }, { dia: 'Ter', reservas: 2 },
+      { dia: 'Qua', reservas: 3 }, { dia: 'Qui', reservas: 3 },
+      { dia: 'Sex', reservas: 4 }, { dia: 'Sáb', reservas: 8 },
+      { dia: 'Dom', reservas: 7 },
+    ],
+    reclamacoesComuns: [
+      { descricao: 'Gramado mal conservado', count: 3 },
+      { descricao: 'Falta de vestiário', count: 2 },
+      { descricao: 'Acesso difícil para cadeirantes', count: 1 },
+    ],
+    sugestoesEvento: [
+      'Torneio de Futebol Comunitário — finais de semana (única movimentação real)',
+      'Dia de Esporte para Crianças — promover uso nos horários vazios das manhãs',
+      'Feira de Saúde e Esporte — baixa demanda permite estrutura temporária no campo',
+    ],
+  },
+]
+
+// ── Eventos públicos ─────────────────────────────────────────────────────────
+
+export type Evento = {
+  id: string
+  espacoId: string
+  titulo: string
+  descricao: string
+  data: string
+  horaInicio: string
+  horaFim: string
+  organizador: string
+}
+
+export const mockEventosIniciais: Evento[] = [
+  {
+    id: 'ev-1',
+    espacoId: '1',
+    titulo: 'Torneio de Tênis Amador',
+    descricao: 'Torneio aberto à comunidade. Inscrições na Prefeitura de Colatina.',
+    data: '2026-06-28',
+    horaInicio: '08:00',
+    horaFim: '17:00',
+    organizador: 'Prefeitura de Colatina',
+  },
+  {
+    id: 'ev-2',
+    espacoId: '3',
+    titulo: 'Festival de Vôlei Sul',
+    descricao: 'Evento gratuito com times locais e convidados de cidades vizinhas.',
+    data: '2026-06-29',
+    horaInicio: '14:00',
+    horaFim: '20:00',
+    organizador: 'Associação Esportiva Sul',
+  },
+]

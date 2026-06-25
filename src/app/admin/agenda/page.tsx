@@ -1,15 +1,15 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { ChevronLeft, ChevronRight, Plus, Phone, Clock, User, X, AlertTriangle } from 'lucide-react'
-import { mockEspacos, mockReservas } from '@/lib/mock-data'
+import { ChevronLeft, ChevronRight, Plus, Phone, Clock, User, X, AlertTriangle, CalendarDays } from 'lucide-react'
+import { mockEspacos, mockReservas, mockEventosIniciais, type Evento } from '@/lib/mock-data'
 
 type Reserva = typeof mockReservas[number]
 type Bloqueio = { id: string; espacoId: string; motivo: string; descricao: string; dataInicio: string; dataFim: string; horaInicio: string; horaFim: string }
 
 const HORAS = ['07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00']
 const DIAS_SEMANA = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
-const MOTIVOS = ['Manutenção', 'Limpeza', 'Evento', 'Outro']
+const MOTIVOS = ['Manutenção', 'Limpeza', 'Outro']
 const DIAS_SEMANA_PILLS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
 
 function getMonday(d: Date): Date {
@@ -31,12 +31,14 @@ function fmtDiaMes(d: Date): string {
 
 function blocoStyle(tipo: string): { bg: string; text: string; border: string } {
   if (tipo === 'bloqueio') return { bg: '#FEE2E2', text: '#C53030', border: '#FCA5A5' }
+  if (tipo === 'evento') return { bg: '#FEF3C7', text: '#92400E', border: '#FCD34D' }
   if (tipo === 'comum') return { bg: '#E6F0FF', text: '#1B3A6B', border: '#93C5FD' }
   return { bg: '#D1FAE5', text: '#065f3c', border: '#6EE7B7' }
 }
 
 function blocoLabel(tipo: string): string {
   if (tipo === 'bloqueio') return '🔒 Bloqueio'
+  if (tipo === 'evento') return '🎉 Evento'
   if (tipo === 'escola') return '🏫 Escolinha'
   if (tipo === 'idosos') return '🧓 Idosos'
   return '👤 Cidadão'
@@ -47,9 +49,42 @@ export default function AgendaPage() {
   const [weekStart, setWeekStart] = useState(() => getMonday(new Date()))
   const [reservaDrawer, setReservaDrawer] = useState<Reserva | null>(null)
   const [bloqueioModal, setBloqueioModal] = useState(false)
+  const [eventoModal, setEventoModal] = useState(false)
   const [bloqueios, setBloqueios] = useState<Bloqueio[]>([])
+  const [eventos, setEventos] = useState<Evento[]>(mockEventosIniciais)
+  const [eventoDrawer, setEventoDrawer] = useState<Evento | null>(null)
   const [cancelId, setCancelId] = useState<string | null>(null)
   const [reservas, setReservas] = useState(mockReservas)
+
+  // Evento form state
+  const [evEspacoId, setEvEspacoId] = useState(mockEspacos[0].id)
+  const [evTitulo, setEvTitulo] = useState('')
+  const [evDesc, setEvDesc] = useState('')
+  const [evData, setEvData] = useState('')
+  const [evHoraInicio, setEvHoraInicio] = useState('08:00')
+  const [evHoraFim, setEvHoraFim] = useState('18:00')
+  const [evOrg, setEvOrg] = useState('')
+
+  function resetEvento() {
+    setEvEspacoId(mockEspacos[0].id); setEvTitulo(''); setEvDesc('')
+    setEvData(''); setEvHoraInicio('08:00'); setEvHoraFim('18:00'); setEvOrg('')
+  }
+
+  function criarEvento() {
+    if (!evTitulo || !evData) return
+    setEventos(prev => [...prev, {
+      id: `ev-${Date.now()}`,
+      espacoId: evEspacoId,
+      titulo: evTitulo,
+      descricao: evDesc,
+      data: evData,
+      horaInicio: evHoraInicio,
+      horaFim: evHoraFim,
+      organizador: evOrg || 'Prefeitura de Colatina',
+    }])
+    setEventoModal(false)
+    resetEvento()
+  }
 
   // Bloqueio form state
   const [bEspacoId, setBEspacoId] = useState(mockEspacos[0].id)
@@ -95,7 +130,7 @@ export default function AgendaPage() {
     setWeekStart(d)
   }
 
-  function getCell(date: string, hora: string): { reserva: Reserva | null; bloqueio: Bloqueio | null } {
+  function getCell(date: string, hora: string): { reserva: Reserva | null; bloqueio: Bloqueio | null; evento: Evento | null } {
     const r = reservas.find(
       r => r.espacoId === espacoId && r.data === date && r.horaInicio === hora
     ) ?? null
@@ -103,7 +138,11 @@ export default function AgendaPage() {
       b => b.espacoId === espacoId && b.dataInicio <= date && b.dataFim >= date
         && b.horaInicio <= hora && b.horaFim > hora
     ) ?? null
-    return { reserva: r, bloqueio: b }
+    const ev = eventos.find(
+      ev => ev.espacoId === espacoId && ev.data === date
+        && ev.horaInicio <= hora && ev.horaFim > hora
+    ) ?? null
+    return { reserva: r, bloqueio: b, evento: ev }
   }
 
   function cancelarReserva(id: string) {
@@ -160,6 +199,13 @@ export default function AgendaPage() {
             ))}
           </select>
           <button
+            onClick={() => setEventoModal(true)}
+            className="flex items-center gap-2 bg-[#D97706] hover:bg-[#B45309] text-white text-sm font-medium px-4 py-2 rounded-[8px] transition-colors"
+          >
+            <CalendarDays className="w-4 h-4" />
+            Criar evento
+          </button>
+          <button
             onClick={() => setBloqueioModal(true)}
             className="flex items-center gap-2 bg-[#1B3A6B] hover:bg-[#2D5FA6] text-white text-sm font-medium px-4 py-2 rounded-[8px] transition-colors"
           >
@@ -214,17 +260,16 @@ export default function AgendaPage() {
                     {hora}
                   </div>
                   {weekDates.map((date, di) => {
-                    const { reserva, bloqueio } = getCell(date, hora)
+                    const { reserva, bloqueio, evento } = getCell(date, hora)
                     const style = reserva
                       ? blocoStyle(reserva.tipo)
+                      : evento
+                      ? blocoStyle('evento')
                       : bloqueio
                       ? blocoStyle('bloqueio')
                       : null
                     return (
-                      <div
-                        key={di}
-                        className="border-l border-[#F1F5F9] p-0.5"
-                      >
+                      <div key={di} className="border-l border-[#F1F5F9] p-0.5">
                         {reserva && style && (
                           <button
                             onClick={() => setReservaDrawer(reserva)}
@@ -239,7 +284,21 @@ export default function AgendaPage() {
                             </p>
                           </button>
                         )}
-                        {bloqueio && !reserva && style && (
+                        {evento && !reserva && style && (
+                          <button
+                            onClick={() => setEventoDrawer(evento)}
+                            className="w-full h-full rounded-[4px] px-1.5 py-1 text-left transition-opacity hover:opacity-80"
+                            style={{ background: style.bg, border: `1px solid ${style.border}` }}
+                          >
+                            <p className="text-[10px] font-semibold leading-tight truncate" style={{ color: style.text }}>
+                              🎉 Evento
+                            </p>
+                            <p className="text-[9px] truncate" style={{ color: style.text, opacity: 0.8 }}>
+                              {evento.titulo}
+                            </p>
+                          </button>
+                        )}
+                        {bloqueio && !reserva && !evento && style && (
                           <div
                             className="w-full h-full rounded-[4px] px-1.5 py-1"
                             style={{ background: style.bg, border: `1px solid ${style.border}` }}
@@ -259,10 +318,11 @@ export default function AgendaPage() {
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-4 px-4 py-3 border-t border-[#F1F5F9]">
+        <div className="flex items-center gap-4 px-4 py-3 border-t border-[#F1F5F9] flex-wrap">
           {[
             { label: 'Cidadão comum', ...blocoStyle('comum') },
             { label: 'Prioridade social', ...blocoStyle('prioridade') },
+            { label: 'Evento público', ...blocoStyle('evento') },
             { label: 'Bloqueio', ...blocoStyle('bloqueio') },
           ].map(l => (
             <div key={l.label} className="flex items-center gap-1.5">
@@ -323,6 +383,61 @@ export default function AgendaPage() {
                 className="w-full py-2.5 text-sm font-medium text-[#E53E3E] border border-[#E53E3E] rounded-[8px] hover:bg-[#FEE2E2] transition-colors"
               >
                 Cancelar reserva
+              </button>
+            </div>
+          </aside>
+        </>
+      )}
+
+      {/* Evento drawer */}
+      {eventoDrawer && (
+        <>
+          <div className="fixed inset-0 z-40 bg-black/20" onClick={() => setEventoDrawer(null)} />
+          <aside className="fixed inset-y-0 right-0 z-50 w-[340px] bg-white shadow-2xl flex flex-col">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[#E5E7EB]">
+              <h2 className="font-bold text-[#0D1F3C] text-base" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+                Detalhes do evento
+              </h2>
+              <button onClick={() => setEventoDrawer(null)} className="p-1.5 rounded-md hover:bg-[#F3F4F6] text-[#64748B]">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="flex-1 p-5 space-y-4">
+              <div className="rounded-[10px] p-4 space-y-3" style={{ background: '#FEF3C7' }}>
+                <p className="text-base font-bold text-[#92400E]">🎉 {eventoDrawer.titulo}</p>
+                {eventoDrawer.descricao && (
+                  <p className="text-sm text-[#92400E] opacity-80">{eventoDrawer.descricao}</p>
+                )}
+              </div>
+              <div className="bg-[#F4F7FB] rounded-[8px] px-3 py-2">
+                <p className="text-xs text-[#64748B]">Espaço</p>
+                <p className="text-sm font-medium text-[#0D1F3C] mt-0.5">
+                  {mockEspacos.find(e => e.id === eventoDrawer.espacoId)?.nome}
+                </p>
+              </div>
+              <div className="bg-[#F4F7FB] rounded-[8px] px-3 py-2">
+                <p className="text-xs text-[#64748B]">Data e horário</p>
+                <p className="text-sm font-medium text-[#0D1F3C] mt-0.5">
+                  {eventoDrawer.data} · {eventoDrawer.horaInicio} – {eventoDrawer.horaFim}
+                </p>
+              </div>
+              <div className="bg-[#F4F7FB] rounded-[8px] px-3 py-2">
+                <p className="text-xs text-[#64748B]">Organizador</p>
+                <p className="text-sm font-medium text-[#0D1F3C] mt-0.5">{eventoDrawer.organizador}</p>
+              </div>
+              <div className="rounded-[8px] px-3 py-2 bg-[#D1FAE5] border border-[#6EE7B7]">
+                <p className="text-xs font-medium text-[#065f3c]">✅ Visível para os cidadãos no portal público</p>
+              </div>
+            </div>
+            <div className="px-5 py-4 border-t border-[#E5E7EB]">
+              <button
+                onClick={() => {
+                  setEventos(prev => prev.filter(ev => ev.id !== eventoDrawer.id))
+                  setEventoDrawer(null)
+                }}
+                className="w-full py-2.5 text-sm font-medium text-[#E53E3E] border border-[#E53E3E] rounded-[8px] hover:bg-[#FEE2E2] transition-colors"
+              >
+                Remover evento
               </button>
             </div>
           </aside>
@@ -542,6 +657,78 @@ export default function AgendaPage() {
                 </button>
               </div>
             )}
+          </div>
+        </>
+      )}
+
+      {/* Evento modal */}
+      {eventoModal && (
+        <>
+          <div className="fixed inset-0 z-40 bg-black/20" onClick={() => { setEventoModal(false); resetEvento() }} />
+          <div className="fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 bg-white rounded-[14px] shadow-2xl w-[460px] max-w-[calc(100vw-2rem)] max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#F1F5F9] sticky top-0 bg-white rounded-t-[14px]">
+              <h2 className="font-bold text-[#0D1F3C] text-base" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+                🎉 Criar evento público
+              </h2>
+              <button onClick={() => { setEventoModal(false); resetEvento() }} className="p-1.5 rounded-md hover:bg-[#F3F4F6] text-[#64748B]">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="px-6 py-5 space-y-4">
+              <div className="rounded-[8px] bg-[#FEF3C7] border border-[#FCD34D] px-3 py-2 text-xs text-[#92400E]">
+                Eventos são visíveis para os cidadãos no portal público e bloqueiam o horário para reservas individuais.
+              </div>
+              <MiniField label="Espaço">
+                <select value={evEspacoId} onChange={e => setEvEspacoId(e.target.value)}
+                  className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#D97706]/40">
+                  {mockEspacos.map(e => <option key={e.id} value={e.id}>{e.nome}</option>)}
+                </select>
+              </MiniField>
+              <MiniField label="Nome do evento *">
+                <input type="text" value={evTitulo} onChange={e => setEvTitulo(e.target.value)}
+                  placeholder="Ex: Torneio de Tênis Amador"
+                  className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D97706]/40 placeholder:text-[#9CA3AF]" />
+              </MiniField>
+              <MiniField label="Descrição (opcional)">
+                <textarea value={evDesc} onChange={e => setEvDesc(e.target.value)} rows={2}
+                  placeholder="Ex: Evento aberto à comunidade, inscrições na prefeitura."
+                  className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#D97706]/40 placeholder:text-[#9CA3AF]" />
+              </MiniField>
+              <MiniField label="Organizador">
+                <input type="text" value={evOrg} onChange={e => setEvOrg(e.target.value)}
+                  placeholder="Prefeitura de Colatina"
+                  className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D97706]/40 placeholder:text-[#9CA3AF]" />
+              </MiniField>
+              <MiniField label="Data *">
+                <input type="date" value={evData} onChange={e => setEvData(e.target.value)}
+                  className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D97706]/40" />
+              </MiniField>
+              <div className="grid grid-cols-2 gap-3">
+                <MiniField label="Hora início">
+                  <select value={evHoraInicio} onChange={e => setEvHoraInicio(e.target.value)}
+                    className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#D97706]/40">
+                    {HORAS.map(h => <option key={h} value={h}>{h}</option>)}
+                  </select>
+                </MiniField>
+                <MiniField label="Hora fim">
+                  <select value={evHoraFim} onChange={e => setEvHoraFim(e.target.value)}
+                    className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#D97706]/40">
+                    {HORAS.map(h => <option key={h} value={h}>{h}</option>)}
+                  </select>
+                </MiniField>
+              </div>
+            </div>
+            <div className="px-6 pb-5 flex gap-3">
+              <button onClick={() => { setEventoModal(false); resetEvento() }}
+                className="flex-1 py-2.5 text-sm border border-[#E5E7EB] rounded-[8px] hover:bg-[#F3F4F6] text-[#374151]">
+                Cancelar
+              </button>
+              <button onClick={criarEvento}
+                disabled={!evTitulo || !evData}
+                className="flex-1 py-2.5 text-sm bg-[#D97706] text-white rounded-[8px] hover:bg-[#B45309] disabled:opacity-40 disabled:cursor-not-allowed">
+                Publicar evento
+              </button>
+            </div>
           </div>
         </>
       )}

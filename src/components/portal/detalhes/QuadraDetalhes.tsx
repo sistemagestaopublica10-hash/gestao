@@ -11,7 +11,7 @@ import Footer from '@/components/portal/layout/Footer'
 import DemoLoginBanner from '@/components/portal/layout/DemoLoginBanner'
 import PortalNav from '@/components/portal/layout/PortalNav'
 import ListaAvaliacoes from './ListaAvaliacoes'
-import { mockEspacosPublicos, mockPostagens } from '@/lib/mock-data'
+import { mockEspacosPublicos, mockPostagens, mockEventosIniciais } from '@/lib/mock-data'
 import { useAuthStore } from '@/lib/auth-store'
 
 const QUICK_SLOTS = ['09:00', '10:00', '14:00', '16:00', '19:00']
@@ -337,6 +337,43 @@ export default function QuadraDetalhes({ id }: { id: string }) {
                   </div>
                 )}
               </div>
+
+              {/* Próximos Eventos */}
+              {(() => {
+                const eventosEspaco = mockEventosIniciais.filter(ev => ev.espacoId === espaco.id)
+                if (eventosEspaco.length === 0) return null
+                return (
+                  <div className="animate-fade-in">
+                    <h2 className="text-lg font-bold text-[#111827] mb-3" style={{ fontFamily: 'var(--font-sans)' }}>
+                      🎉 Próximos Eventos
+                    </h2>
+                    <div className="space-y-3">
+                      {eventosEspaco.map(ev => (
+                        <div key={ev.id} className="bg-[#FFFBEB] border border-[#FCD34D] rounded-[14px] p-4">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="font-bold text-[#92400E] text-base">{ev.titulo}</p>
+                              {ev.descricao && (
+                                <p className="text-sm text-[#78350F] mt-0.5 opacity-80">{ev.descricao}</p>
+                              )}
+                              <div className="flex items-center gap-3 mt-2 flex-wrap">
+                                <span className="flex items-center gap-1 text-xs text-[#92400E] font-medium">
+                                  <Clock className="w-3 h-3" />
+                                  {ev.data} · {ev.horaInicio} – {ev.horaFim}
+                                </span>
+                                <span className="text-xs text-[#B45309]">📌 {ev.organizador}</span>
+                              </div>
+                            </div>
+                            <span className="shrink-0 text-xs font-semibold px-2.5 py-1 bg-[#D97706] text-white rounded-full">
+                              Evento
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })()}
 
               {/* Avaliações — seção integrada */}
               <div className="animate-fade-in">
