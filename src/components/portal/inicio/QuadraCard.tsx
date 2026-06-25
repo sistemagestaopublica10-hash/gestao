@@ -142,11 +142,14 @@ export default function QuadraCard({ espaco, index = 0 }: Props) {
             <span style={{ fontSize: 13, fontWeight: 700, color: '#111' }}>Gratuito</span>
           </div>
 
-          {/* Estrela amarela + nota */}
+          {/* Estrela + nota + total avaliações */}
           <div className="flex items-center gap-1">
             <Star style={{ width: 13, height: 13, color: '#f59e0b', fill: '#f59e0b', flexShrink: 0 }} />
             <span style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>
-              {espaco.nota.toFixed(2)}
+              {espaco.nota.toFixed(1)}
+            </span>
+            <span style={{ fontSize: 12, color: '#aaa', marginLeft: 1 }}>
+              · {espaco.totalAvaliacoes}
             </span>
           </div>
         </div>

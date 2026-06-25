@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
   ArrowLeft, MapPin, Clock, Medal, Star, AlertTriangle,
-  ChevronDown, ChevronUp, ArrowRight, Search, LayoutDashboard, LogOut,
+  ChevronDown, ChevronUp, ArrowRight, Search, LayoutDashboard, LogOut, Wrench,
 } from 'lucide-react'
 import Footer from '@/components/portal/layout/Footer'
 import DemoLoginBanner from '@/components/portal/layout/DemoLoginBanner'
@@ -190,42 +190,75 @@ export default function QuadraDetalhes({ id }: { id: string }) {
           </div>
         </div>
 
+        {/* ── Galeria Airbnb: 1 grande + 2×2 ───────────────── */}
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-6 animate-scale-in">
+          {/* Desktop: layout 1 grande + 2×2 */}
+          <div
+            className="hidden sm:grid gap-2 overflow-hidden"
+            style={{ gridTemplateColumns: '3fr 2fr', height: 380, borderRadius: 16 }}
+          >
+            {/* Foto grande — esquerda */}
+            <div className={`relative bg-gradient-to-br ${espaco.gradiente} overflow-hidden`}>
+              <div className="absolute inset-0 bg-black/0 hover:bg-black/5 transition-colors duration-300" />
+              <Link
+                href="/inicio"
+                className="absolute top-4 left-4 flex items-center gap-1.5 text-white/90 hover:text-white text-sm font-medium bg-black/25 backdrop-blur-sm px-3 py-1.5 rounded-full transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Voltar
+              </Link>
+              {espaco.totalRelatosAbertos > 0 && (
+                <span className="absolute top-4 right-4 flex items-center gap-1 text-xs font-bold bg-red-500 text-white px-2.5 py-1 rounded-full shadow">
+                  <AlertTriangle className="w-3.5 h-3.5" />
+                  {espaco.totalRelatosAbertos} {espaco.totalRelatosAbertos === 1 ? 'relato aberto' : 'relatos abertos'}
+                </span>
+              )}
+            </div>
+
+            {/* Grade 2×2 — direita */}
+            <div className="grid grid-cols-2 gap-2">
+              {[0, 1, 2, 3].map(i => (
+                <div
+                  key={i}
+                  className={`relative bg-gradient-to-br ${espaco.gradiente} cursor-pointer hover:opacity-90 transition-opacity overflow-hidden`}
+                  style={{ opacity: 0.85 - i * 0.1 }}
+                >
+                  {i === 3 && (
+                    <button className="absolute bottom-2.5 right-2.5 flex items-center gap-1.5 text-[11.5px] font-semibold text-gray-700 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full border border-gray-200 hover:bg-white transition-colors">
+                      ⊞ Ver todas as fotos
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile: foto única com ← Voltar e badge */}
+          <div
+            className={`relative sm:hidden h-[240px] rounded-[16px] bg-gradient-to-br ${espaco.gradiente} overflow-hidden`}
+          >
+            <Link
+              href="/inicio"
+              className="absolute top-4 left-4 flex items-center gap-1.5 text-white/90 hover:text-white text-sm font-medium bg-black/25 backdrop-blur-sm px-3 py-1.5 rounded-full transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Voltar
+            </Link>
+            {espaco.totalRelatosAbertos > 0 && (
+              <span className="absolute top-4 right-4 flex items-center gap-1 text-xs font-bold bg-red-500 text-white px-2.5 py-1 rounded-full shadow">
+                <AlertTriangle className="w-3.5 h-3.5" />
+                {espaco.totalRelatosAbertos} {espaco.totalRelatosAbertos === 1 ? 'relato aberto' : 'relatos abertos'}
+              </span>
+            )}
+          </div>
+        </div>
+
         {/* ── Layout 2 colunas ───────────────────────────── */}
         <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-12">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
 
             {/* ── COLUNA ESQUERDA ──────────────────────────── */}
-            <div className="min-w-0 space-y-5">
-
-              {/* Hero gradiente */}
-              <div
-                className={`relative h-[260px] sm:h-[320px] rounded-[20px] bg-gradient-to-br ${espaco.gradiente} overflow-hidden animate-scale-in`}
-              >
-                <Link
-                  href="/inicio"
-                  className="absolute top-4 left-4 flex items-center gap-1.5 text-white/90 hover:text-white text-sm font-medium bg-black/25 backdrop-blur-sm px-3 py-1.5 rounded-full transition-colors"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  Voltar
-                </Link>
-                {espaco.totalRelatosAbertos > 0 && (
-                  <span className="absolute top-4 right-4 flex items-center gap-1 text-xs font-bold bg-red-500 text-white px-2.5 py-1 rounded-full shadow">
-                    <AlertTriangle className="w-3.5 h-3.5" />
-                    {espaco.totalRelatosAbertos} {espaco.totalRelatosAbertos === 1 ? 'relato aberto' : 'relatos abertos'}
-                  </span>
-                )}
-              </div>
-
-              {/* Galeria (3 thumbnails) */}
-              <div className="grid grid-cols-3 gap-2.5 animate-fade-in" style={{ animationDelay: '100ms' }}>
-                {[0.75, 0.55, 0.40].map((op, i) => (
-                  <div
-                    key={i}
-                    className={`h-20 sm:h-24 rounded-[12px] bg-gradient-to-br ${espaco.gradiente} cursor-pointer hover:opacity-90 transition-opacity`}
-                    style={{ opacity: op }}
-                  />
-                ))}
-              </div>
+            <div className="min-w-0 space-y-5 self-start">
 
               {/* Sobre o espaço */}
               <div className="bg-white rounded-[16px] shadow-card p-5">
@@ -267,6 +300,21 @@ export default function QuadraDetalhes({ id }: { id: string }) {
                       </div>
                     </div>
                   ))}
+
+                  {/* Card manutenção — largura dupla */}
+                  <div className="col-span-2 flex items-start gap-2.5 p-3 bg-[#F9FAFB] rounded-[12px]">
+                    <Wrench className="w-4 h-4 text-[#9CA3AF] shrink-0 mt-0.5" />
+                    <div className="flex-1 grid grid-cols-2">
+                      <div>
+                        <p className="text-[10px] text-[#9CA3AF] font-medium uppercase tracking-wide">Última manutenção</p>
+                        <p className="text-sm font-semibold text-[#111827] mt-0.5">15/03/2026</p>
+                      </div>
+                      <div className="border-l border-[#E5E7EB] pl-4">
+                        <p className="text-[10px] text-[#9CA3AF] font-medium uppercase tracking-wide">Próxima manutenção</p>
+                        <p className="text-sm font-semibold text-[#111827] mt-0.5">Agendada</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -302,7 +350,7 @@ export default function QuadraDetalhes({ id }: { id: string }) {
 
             {/* ── COLUNA DIREITA — widget sticky ───────────── */}
             <div className="hidden lg:block animate-slide-in-r" style={{ animationDelay: '150ms' }}>
-              <div className="sticky top-[72px]">
+              <div className="sticky top-[80px]">
                 <div className="bg-white rounded-[20px] shadow-lg border border-[#E5E7EB] p-5 space-y-4">
 
                   <div>

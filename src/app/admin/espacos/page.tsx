@@ -41,7 +41,7 @@ function SheetEspaco({
   const [bairro, setBairro] = useState(espaco?.bairro ?? '')
   const [tipo, setTipo] = useState(espaco?.tipo ?? TIPOS[0])
   const [modalidades, setModalidades] = useState<string[]>(espaco?.modalidades?.map(m => m.charAt(0).toUpperCase() + m.slice(1)) ?? [])
-  const [status, setStatus] = useState<'ativo' | 'inativo'>(espaco?.status as 'ativo' | 'inativo' ?? 'ativo')
+  const [status, setStatus] = useState<'ativo' | 'inativo' | 'manutencao'>(espaco?.status as 'ativo' | 'inativo' | 'manutencao' ?? 'ativo')
   const [faixas, setFaixas] = useState([
     { faixa: 'Manhã (07–12h)', prioridade: 'Livre' },
     { faixa: 'Tarde (12–18h)', prioridade: 'Livre' },
@@ -151,21 +151,21 @@ function SheetEspaco({
           </Field>
 
           <Field label="Status">
-            <div className="flex gap-3">
-              {(['ativo', 'inativo'] as const).map(s => (
+            <div className="flex gap-2">
+              {([
+                { value: 'ativo',      label: '✓ Ativo',           active: 'bg-[#D1FAE5] text-[#1A9E60] border-[#1A9E60]' },
+                { value: 'manutencao', label: '🔧 Em manutenção',  active: 'bg-[#FEF3C7] text-[#D97706] border-[#D97706]' },
+                { value: 'inativo',    label: '✕ Inativo',          active: 'bg-[#FEE2E2] text-[#E53E3E] border-[#E53E3E]' },
+              ] as const).map(s => (
                 <button
-                  key={s}
+                  key={s.value}
                   type="button"
-                  onClick={() => setStatus(s)}
-                  className={`flex-1 py-2 rounded-[8px] text-sm font-medium border transition-colors ${
-                    status === s
-                      ? s === 'ativo'
-                        ? 'bg-[#D1FAE5] text-[#1A9E60] border-[#1A9E60]'
-                        : 'bg-[#FEE2E2] text-[#E53E3E] border-[#E53E3E]'
-                      : 'bg-white text-[#9CA3AF] border-[#E5E7EB] hover:border-[#9CA3AF]'
+                  onClick={() => setStatus(s.value)}
+                  className={`flex-1 py-2 rounded-[8px] text-xs font-medium border transition-colors ${
+                    status === s.value ? s.active : 'bg-white text-[#9CA3AF] border-[#E5E7EB] hover:border-[#9CA3AF]'
                   }`}
                 >
-                  {s === 'ativo' ? '✓ Ativo' : '✕ Inativo'}
+                  {s.label}
                 </button>
               ))}
             </div>
@@ -361,6 +361,11 @@ export default function EspacosPage() {
                     <span className="inline-flex items-center gap-1 text-xs font-medium text-[#1A9E60] bg-[#D1FAE5] px-2.5 py-1 rounded-full">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#1A9E60]" />
                       Ativo
+                    </span>
+                  ) : e.status === 'manutencao' ? (
+                    <span className="inline-flex items-center gap-1 text-xs font-medium text-[#D97706] bg-[#FEF3C7] px-2.5 py-1 rounded-full">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#D97706]" />
+                      Em manutenção
                     </span>
                   ) : (
                     <span className="inline-flex items-center gap-1 text-xs font-medium text-[#E53E3E] bg-[#FEE2E2] px-2.5 py-1 rounded-full">

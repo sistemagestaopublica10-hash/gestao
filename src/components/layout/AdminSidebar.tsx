@@ -15,7 +15,9 @@ import {
   X,
 } from 'lucide-react'
 import { useAuthStore } from '@/lib/auth-store'
-import { mockGestor } from '@/lib/mock-data'
+import { mockGestor, mockEspacosPublicos } from '@/lib/mock-data'
+
+const totalRelatosAbertos = mockEspacosPublicos.reduce((s, e) => s + e.totalRelatosAbertos, 0)
 
 const navItems = [
   { href: '/admin/dashboard',  label: 'Dashboard',  icon: LayoutDashboard },
@@ -73,6 +75,7 @@ export default function AdminSidebar({ isOpen = false, onClose }: Props) {
       <nav className="flex-1 px-3 py-4 space-y-1">
         {navItems.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(href + '/')
+          const badge = href === '/admin/avaliacoes' && totalRelatosAbertos > 0 ? totalRelatosAbertos : null
           return (
             <Link
               key={href}
@@ -85,7 +88,12 @@ export default function AdminSidebar({ isOpen = false, onClose }: Props) {
               }`}
             >
               <Icon className="w-4 h-4 shrink-0" />
-              <span>{label}</span>
+              <span className="flex-1">{label}</span>
+              {badge && (
+                <span className="ml-auto bg-[#E53E3E] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center leading-none">
+                  {badge}
+                </span>
+              )}
             </Link>
           )
         })}

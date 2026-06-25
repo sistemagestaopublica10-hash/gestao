@@ -9,7 +9,8 @@ type Bloqueio = { id: string; espacoId: string; motivo: string; descricao: strin
 
 const HORAS = ['07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00']
 const DIAS_SEMANA = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
-const MOTIVOS = ['Manutenção', 'Evento', 'Outro']
+const MOTIVOS = ['Manutenção', 'Limpeza', 'Evento', 'Outro']
+const DIAS_SEMANA_PILLS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
 
 function getMonday(d: Date): Date {
   const day = d.getDay()
@@ -54,10 +55,22 @@ export default function AgendaPage() {
   const [bEspacoId, setBEspacoId] = useState(mockEspacos[0].id)
   const [bMotivo, setBMotivo] = useState(MOTIVOS[0])
   const [bDataInicio, setBDataInicio] = useState('')
-  const [bDataFim, setBDataFim] = useState('')
   const [bHoraInicio, setBHoraInicio] = useState('07:00')
   const [bHoraFim, setBHoraFim] = useState('08:00')
   const [bObs, setBObs] = useState('')
+  // Novo: tipo único vs recorrente
+  const [bTipo, setBTipo] = useState<'unico' | 'recorrente' | null>(null)
+  const [bRecorrencia, setBRecorrencia] = useState<'semanal' | 'mensal'>('semanal')
+  const [bDiasSemana, setBDiasSemana] = useState<string[]>([])
+  const [bDiaMes, setBDiaMes] = useState(1)
+  const [bValidoAte, setBValidoAte] = useState('')
+  const [bConflito, setBConflito] = useState(false)
+
+  function resetBloqueio() {
+    setBTipo(null); setBEspacoId(mockEspacos[0].id); setBMotivo(MOTIVOS[0])
+    setBDataInicio(''); setBHoraInicio('07:00'); setBHoraFim('08:00'); setBObs('')
+    setBRecorrencia('semanal'); setBDiasSemana([]); setBDiaMes(1); setBValidoAte(''); setBConflito(false)
+  }
 
   const days = useMemo(() =>
     Array.from({ length: 7 }, (_, i) => {
@@ -99,19 +112,28 @@ export default function AgendaPage() {
     setReservaDrawer(null)
   }
 
-  function criarBloqueio() {
+  function verificarECriar() {
+    const conflitos = reservas.filter(r =>
+      r.espacoId === bEspacoId && r.data === bDataInicio &&
+      r.horaInicio >= bHoraInicio && r.horaInicio < bHoraFim
+    )
+    if (conflitos.length > 0) { setBConflito(true); return }
+    confirmarBloqueio()
+  }
+
+  function confirmarBloqueio() {
     setBloqueios(prev => [...prev, {
       id: String(Date.now()),
       espacoId: bEspacoId,
       motivo: bMotivo,
       descricao: bObs,
       dataInicio: bDataInicio,
-      dataFim: bDataFim,
+      dataFim: bDataInicio,
       horaInicio: bHoraInicio,
       horaFim: bHoraFim,
     }])
     setBloqueioModal(false)
-    setBObs('')
+    resetBloqueio()
   }
 
   const espacoNome = mockEspacos.find(e => e.id === espacoId)?.nome ?? ''
@@ -338,82 +360,188 @@ export default function AgendaPage() {
       {/* Bloqueio modal */}
       {bloqueioModal && (
         <>
-          <div className="fixed inset-0 z-40 bg-black/20" onClick={() => setBloqueioModal(false)} />
-          <div className="fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 bg-white rounded-[14px] shadow-2xl p-6 w-[420px] max-w-[calc(100vw-2rem)]">
-            <div className="flex items-center justify-between mb-5">
+          <div className="fixed inset-0 z-40 bg-black/20" onClick={() => { setBloqueioModal(false); resetBloqueio() }} />
+          <div className="fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 bg-white rounded-[14px] shadow-2xl w-[460px] max-w-[calc(100vw-2rem)] max-h-[90vh] overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#F1F5F9] sticky top-0 bg-white rounded-t-[14px]">
               <h2 className="font-bold text-[#0D1F3C] text-base" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
                 Criar bloqueio
               </h2>
-              <button onClick={() => setBloqueioModal(false)} className="p-1.5 rounded-md hover:bg-[#F3F4F6] text-[#64748B]">
+              <button onClick={() => { setBloqueioModal(false); resetBloqueio() }} className="p-1.5 rounded-md hover:bg-[#F3F4F6] text-[#64748B]">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="space-y-4">
-              <MiniField label="Espaço">
-                <select
-                  value={bEspacoId}
-                  onChange={e => setBEspacoId(e.target.value)}
-                  className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#2D5FA6]/40"
-                >
-                  {mockEspacos.map(e => <option key={e.id} value={e.id}>{e.nome}</option>)}
-                </select>
-              </MiniField>
-
-              <MiniField label="Motivo">
-                <select
-                  value={bMotivo}
-                  onChange={e => setBMotivo(e.target.value)}
-                  className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#2D5FA6]/40"
-                >
-                  {MOTIVOS.map(m => <option key={m} value={m}>{m}</option>)}
-                </select>
-              </MiniField>
-
-              <div className="grid grid-cols-2 gap-3">
-                <MiniField label="Data início">
-                  <input type="date" value={bDataInicio} onChange={e => setBDataInicio(e.target.value)}
-                    className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2D5FA6]/40" />
-                </MiniField>
-                <MiniField label="Data fim">
-                  <input type="date" value={bDataFim} onChange={e => setBDataFim(e.target.value)}
-                    className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2D5FA6]/40" />
-                </MiniField>
-                <MiniField label="Hora início">
-                  <select value={bHoraInicio} onChange={e => setBHoraInicio(e.target.value)}
-                    className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#2D5FA6]/40">
-                    {HORAS.map(h => <option key={h} value={h}>{h}</option>)}
-                  </select>
-                </MiniField>
-                <MiniField label="Hora fim">
-                  <select value={bHoraFim} onChange={e => setBHoraFim(e.target.value)}
-                    className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#2D5FA6]/40">
-                    {HORAS.map(h => <option key={h} value={h}>{h}</option>)}
-                  </select>
-                </MiniField>
+            <div className="px-6 py-5 space-y-5">
+              {/* Tipo de bloqueio — pills */}
+              <div>
+                <p className="text-xs font-semibold text-[#374151] mb-2">Tipo de bloqueio</p>
+                <div className="flex gap-2">
+                  {(['unico', 'recorrente'] as const).map(t => (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => setBTipo(t)}
+                      className={`flex-1 py-2 rounded-[8px] text-sm font-medium border transition-colors ${
+                        bTipo === t
+                          ? 'bg-[#1B3A6B] text-white border-[#1B3A6B]'
+                          : 'bg-white text-[#374151] border-[#E5E7EB] hover:border-[#1B3A6B]'
+                      }`}
+                    >
+                      {t === 'unico' ? 'Único' : 'Recorrente'}
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              <MiniField label="Observação (opcional)">
-                <textarea
-                  value={bObs}
-                  onChange={e => setBObs(e.target.value)}
-                  rows={2}
-                  placeholder="Ex: Torneio municipal — acesso restrito"
-                  className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#2D5FA6]/40 placeholder:text-[#9CA3AF]"
-                />
-              </MiniField>
+              {/* Formulário só aparece após escolher tipo */}
+              {bTipo && (
+                <>
+                  <MiniField label="Espaço">
+                    <select value={bEspacoId} onChange={e => setBEspacoId(e.target.value)}
+                      className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#2D5FA6]/40">
+                      {mockEspacos.map(e => <option key={e.id} value={e.id}>{e.nome}</option>)}
+                    </select>
+                  </MiniField>
+
+                  <MiniField label="Motivo">
+                    <select value={bMotivo} onChange={e => setBMotivo(e.target.value)}
+                      className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#2D5FA6]/40">
+                      {MOTIVOS.map(m => <option key={m} value={m}>{m}</option>)}
+                    </select>
+                  </MiniField>
+
+                  {bTipo === 'unico' ? (
+                    <>
+                      <MiniField label="Data">
+                        <input type="date" value={bDataInicio} onChange={e => setBDataInicio(e.target.value)}
+                          className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2D5FA6]/40" />
+                      </MiniField>
+                      <div className="grid grid-cols-2 gap-3">
+                        <MiniField label="Hora início">
+                          <select value={bHoraInicio} onChange={e => setBHoraInicio(e.target.value)}
+                            className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#2D5FA6]/40">
+                            {HORAS.map(h => <option key={h} value={h}>{h}</option>)}
+                          </select>
+                        </MiniField>
+                        <MiniField label="Hora fim">
+                          <select value={bHoraFim} onChange={e => setBHoraFim(e.target.value)}
+                            className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#2D5FA6]/40">
+                            {HORAS.map(h => <option key={h} value={h}>{h}</option>)}
+                          </select>
+                        </MiniField>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Recorrência */}
+                      <div>
+                        <p className="text-xs font-semibold text-[#374151] mb-2">Repetição</p>
+                        <div className="flex gap-2">
+                          {(['semanal', 'mensal'] as const).map(r => (
+                            <button key={r} type="button" onClick={() => setBRecorrencia(r)}
+                              className={`flex-1 py-2 rounded-[8px] text-sm font-medium border transition-colors ${
+                                bRecorrencia === r ? 'bg-[#E6F0FF] text-[#1B3A6B] border-[#1B3A6B]' : 'bg-white text-[#374151] border-[#E5E7EB] hover:border-[#1B3A6B]'
+                              }`}>
+                              {r === 'semanal' ? 'Semanal' : 'Mensal'}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {bRecorrencia === 'semanal' ? (
+                        <div>
+                          <p className="text-xs font-semibold text-[#374151] mb-2">Dias da semana</p>
+                          <div className="flex gap-1.5 flex-wrap">
+                            {DIAS_SEMANA_PILLS.map(d => (
+                              <button key={d} type="button"
+                                onClick={() => setBDiasSemana(prev => prev.includes(d) ? prev.filter(x => x !== d) : [...prev, d])}
+                                className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                                  bDiasSemana.includes(d) ? 'bg-[#1B3A6B] text-white border-[#1B3A6B]' : 'bg-white text-[#374151] border-[#E5E7EB] hover:border-[#1B3A6B]'
+                                }`}>
+                                {d}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      ) : (
+                        <MiniField label="Todo dia (1–31)">
+                          <input type="number" min={1} max={31} value={bDiaMes}
+                            onChange={e => setBDiaMes(Number(e.target.value))}
+                            className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2D5FA6]/40" />
+                          <p className="text-xs text-[#9CA3AF] mt-1">Ex: todo dia {bDiaMes} do mês</p>
+                        </MiniField>
+                      )}
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <MiniField label="Hora início">
+                          <select value={bHoraInicio} onChange={e => setBHoraInicio(e.target.value)}
+                            className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#2D5FA6]/40">
+                            {HORAS.map(h => <option key={h} value={h}>{h}</option>)}
+                          </select>
+                        </MiniField>
+                        <MiniField label="Hora fim">
+                          <select value={bHoraFim} onChange={e => setBHoraFim(e.target.value)}
+                            className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#2D5FA6]/40">
+                            {HORAS.map(h => <option key={h} value={h}>{h}</option>)}
+                          </select>
+                        </MiniField>
+                      </div>
+
+                      <MiniField label="Válido até (opcional — sem data = permanente)">
+                        <input type="date" value={bValidoAte} onChange={e => setBValidoAte(e.target.value)}
+                          className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2D5FA6]/40" />
+                      </MiniField>
+                    </>
+                  )}
+
+                  <MiniField label="Observação (opcional)">
+                    <textarea value={bObs} onChange={e => setBObs(e.target.value)} rows={2}
+                      placeholder="Ex: Torneio municipal — acesso restrito"
+                      className="w-full border border-[#E5E7EB] rounded-[8px] px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#2D5FA6]/40 placeholder:text-[#9CA3AF]" />
+                  </MiniField>
+
+                  {/* Aviso de conflito */}
+                  {bConflito && (
+                    <div className="rounded-[10px] border border-[#FCA5A5] bg-[#FEF2F2] p-4 space-y-3">
+                      <div className="flex items-start gap-2.5">
+                        <AlertTriangle className="w-4 h-4 text-[#E53E3E] shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-sm font-semibold text-[#C53030]">Este bloqueio conflita com reservas existentes.</p>
+                          <p className="text-xs text-[#E53E3E] mt-1">
+                            Elas serão canceladas automaticamente. Os moradores serão notificados.
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button onClick={() => setBConflito(false)}
+                          className="flex-1 py-2 text-xs border border-[#E5E7EB] rounded-[8px] hover:bg-[#F3F4F6] text-[#374151]">
+                          Cancelar
+                        </button>
+                        <button onClick={confirmarBloqueio}
+                          className="flex-1 py-2 text-xs bg-[#E53E3E] text-white rounded-[8px] hover:bg-[#C53030]">
+                          Confirmar mesmo assim
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
 
-            <div className="flex gap-3 mt-5">
-              <button onClick={() => setBloqueioModal(false)}
-                className="flex-1 py-2.5 text-sm border border-[#E5E7EB] rounded-[8px] hover:bg-[#F3F4F6] text-[#374151]">
-                Cancelar
-              </button>
-              <button onClick={criarBloqueio}
-                className="flex-1 py-2.5 text-sm bg-[#1B3A6B] text-white rounded-[8px] hover:bg-[#2D5FA6]">
-                Criar bloqueio
-              </button>
-            </div>
+            {/* Footer */}
+            {bTipo && !bConflito && (
+              <div className="px-6 pb-5 flex gap-3">
+                <button onClick={() => { setBloqueioModal(false); resetBloqueio() }}
+                  className="flex-1 py-2.5 text-sm border border-[#E5E7EB] rounded-[8px] hover:bg-[#F3F4F6] text-[#374151]">
+                  Cancelar
+                </button>
+                <button onClick={verificarECriar}
+                  className="flex-1 py-2.5 text-sm bg-[#1B3A6B] text-white rounded-[8px] hover:bg-[#2D5FA6]">
+                  {bTipo === 'recorrente' ? 'Criar bloqueio recorrente' : 'Criar bloqueio'}
+                </button>
+              </div>
+            )}
           </div>
         </>
       )}
