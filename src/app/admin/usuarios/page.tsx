@@ -10,6 +10,7 @@ import {
   mockUsuarios,
   mockReservas,
   mockPostagens,
+  mockEspacos,
   calcularPontuacao,
   classificarPerfil,
   type UsuarioMock,
@@ -236,17 +237,18 @@ export default function UsuariosPage() {
                   avaliacoesUsuario.length === 0 ? (
                     <p className="text-sm text-[#9CA3AF] text-center py-8">Nenhuma avaliação encontrada.</p>
                   ) : avaliacoesUsuario.map(a => {
-                    const av = a as typeof a & { nota?: number; comentario?: string }
+                    if (a.tipo !== 'avaliacao') return null
+                    const nomeEspaco = mockEspacos.find(e => e.id === a.espacoId)?.nome ?? a.espacoId
                     return (
                       <div key={a.id} className="bg-[#F8FAFC] rounded-[10px] px-4 py-3">
                         <div className="flex items-center gap-1 mb-1">
                           {Array.from({ length: 5 }).map((_, i) => (
-                            <Star key={i} className={`w-3 h-3 ${i < (av.nota ?? 0) ? 'text-[#D97706] fill-current' : 'text-[#E5E7EB] fill-current'}`} />
+                            <Star key={i} className={`w-3 h-3 ${i < a.nota ? 'text-[#D97706] fill-current' : 'text-[#E5E7EB] fill-current'}`} />
                           ))}
                           <span className="text-xs text-[#9CA3AF] ml-1">{a.data}</span>
                         </div>
-                        <p className="text-xs text-[#374151]">{av.comentario ?? a.conteudo}</p>
-                        <p className="text-[11px] text-[#9CA3AF] mt-1">{a.espacoNome}</p>
+                        <p className="text-xs text-[#374151]">{a.comentario}</p>
+                        <p className="text-[11px] text-[#9CA3AF] mt-1">{nomeEspaco}</p>
                       </div>
                     )
                   })
@@ -256,7 +258,8 @@ export default function UsuariosPage() {
                   relatosUsuario.length === 0 ? (
                     <p className="text-sm text-[#9CA3AF] text-center py-8">Nenhum relato encontrado.</p>
                   ) : relatosUsuario.map(r => {
-                    const prob = r as typeof r & { descricao?: string }
+                    if (r.tipo !== 'problema') return null
+                    const nomeEspaco = mockEspacos.find(e => e.id === r.espacoId)?.nome ?? r.espacoId
                     return (
                       <div key={r.id} className="bg-[#FEF3C7] rounded-[10px] px-4 py-3">
                         <div className="flex items-center gap-2 mb-1">
@@ -264,8 +267,8 @@ export default function UsuariosPage() {
                           <span className="text-xs font-semibold text-[#D97706]">Relato de problema</span>
                           <span className="text-xs text-[#9CA3AF] ml-auto">{r.data}</span>
                         </div>
-                        <p className="text-xs text-[#374151]">{prob.descricao ?? r.conteudo}</p>
-                        <p className="text-[11px] text-[#9CA3AF] mt-1">{r.espacoNome}</p>
+                        <p className="text-xs text-[#374151]">{r.descricao}</p>
+                        <p className="text-[11px] text-[#9CA3AF] mt-1">{nomeEspaco}</p>
                       </div>
                     )
                   })
